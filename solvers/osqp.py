@@ -1,7 +1,7 @@
 import osqp
 from . import statuses as s
 from .results import Results
-from benchmark_problems.utils import is_qp_solution_optimal
+from utils.general import is_qp_solution_optimal
 
 
 class OSQPSolver(object):

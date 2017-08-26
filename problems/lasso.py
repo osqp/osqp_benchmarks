@@ -23,11 +23,11 @@ class LassoExample(object):
                                    0.5).astype(float),
                                   np.random.randn(self.n)) / np.sqrt(self.n)
         self.bd = self.Ad.dot(self.x_true) + np.random.randn(self.m)
-        self.lambda_param = (1./5.) * \
-            np.linalg.norm(self.Ad.T.dot(self.bd), np.inf)
+        self.lambda_max = np.linalg.norm(self.Ad.T.dot(self.bd), np.inf)
+        self.lambda_param = (1./5.) * self.lambda_max
 
         self.qp_problem = self._generate_qp_problem()
-        self.cvxpy_problem, self.cvxpy_variables = \
+        self.cvxpy_problem, self.cvxpy_variables, self.cvxpy_param = \
             self._generate_cvxpy_problem()
 
     @staticmethod
@@ -77,13 +77,17 @@ class LassoExample(object):
         y = cvxpy.Variable(self.m)
         t = cvxpy.Variable(self.n)
 
+        # Create parameeter and assign value
+        lambda_cvxpy = cvxpy.Parameter()
+        lambda_cvxpy.value = self.lambda_param
+
         objective = cvxpy.Minimize(cvxpy.quad_form(y, spa.eye(self.m))
                                    + self.lambda_param * (np.ones(self.n) * t))
         constraints = [y == self.Ad * x - self.bd,
                        -t <= x, x <= t]
         problem = cvxpy.Problem(objective, constraints)
 
-        return problem, (x, y, t)
+        return problem, (x, y, t), lambda_cvxpy
 
     def revert_cvxpy_solution(self):
         '''
@@ -104,3 +108,17 @@ class LassoExample(object):
                             -constraints[1].dual_value.A1))
 
         return x, y
+
+    def update_lambda(self, lambda_new):
+        """
+        Update lambda value in inner problems
+        """
+        # Update internal lambda parameter
+        self.lambda_param = lambda_new
+
+        # Update q in QP problem
+        self.qp_problem['q'] = np.append(np.zeros(self.m + self.n),
+                                         self.lambda_param * np.ones(self.n))
+
+        # Update parameter in CVXPY problem
+        self.cvxpy_param.value = self.lambda_param

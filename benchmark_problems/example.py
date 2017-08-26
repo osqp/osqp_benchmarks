@@ -11,7 +11,7 @@ from problems.lasso import LassoExample
 from problems.svm import SVMExample
 from problems.huber import HuberExample
 from problems.control import ControlExample
-from benchmark_problems.utils import make_sure_path_exists
+from utils.general import make_sure_path_exists
 
 examples = [RandomQPExample,
             EqQPExample,

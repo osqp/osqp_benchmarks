@@ -2,7 +2,7 @@ import qpoases
 import numpy as np
 from . import statuses as s
 from .results import Results
-from benchmark_problems.utils import is_qp_solution_optimal, stdout_redirected
+from utils.general import is_qp_solution_optimal, stdout_redirected
 
 
 class qpOASESSolver(object):

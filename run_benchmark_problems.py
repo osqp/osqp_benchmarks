@@ -13,7 +13,7 @@ import os
 import pandas as pd
 from benchmark_problems.example import Example
 import solvers.solvers as s
-from benchmark_problems.utils import gen_int_log_space
+from utils.general import gen_int_log_space
 
 # Define solvers to benchmark
 solvers = [
@@ -62,7 +62,7 @@ problem_dimensions = {'Random QP': gen_int_log_space(10, 2000, 20),
                       'Huber': gen_int_log_space(10, 1000, 20),
                       'Control': gen_int_log_space(4, 100, 20)}
 
-# Small dimensions (to check)
+# Small dimensions (to comment when running on the server)
 for key in problem_dimensions:
     problem_dimensions[key] = [4, 5]
 
@@ -80,8 +80,8 @@ for problem in problems:
 for solver in solvers:
     # Path where solver results are stored
     path = os.path.join('.', 'results', 'benchmark_problems', solver)
-    # Initialize cumulative results
 
+    # Initialize cumulative results
     results = []
     for problem in problems:
         file_name = os.path.join(path, problem, 'full.csv')
