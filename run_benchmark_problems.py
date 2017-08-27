@@ -57,9 +57,9 @@ problems = [
 problem_dimensions = {'Random QP': gen_int_log_space(10, 2000, 20),
                       'Eq QP': gen_int_log_space(10, 2000, 20),
                       'Portfolio': gen_int_log_space(5, 150, 20),
-                      'Lasso': gen_int_log_space(10, 1000, 20),
-                      'SVM': gen_int_log_space(10, 1000, 20),
-                      'Huber': gen_int_log_space(10, 1000, 20),
+                      'Lasso': gen_int_log_space(10, 500, 20),
+                      'SVM': gen_int_log_space(10, 500, 20),
+                      'Huber': gen_int_log_space(10, 500, 20),
                       'Control': gen_int_log_space(4, 100, 20)}
 
 # Small dimensions (to comment when running on the server)
