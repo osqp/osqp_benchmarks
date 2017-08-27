@@ -23,13 +23,13 @@ problems = [
             ]
 
 # Problem dimensions
-dimensions = {'Lasso': 10,
-              'MPC': 20}
+dimensions = {'Lasso': 50,
+              'MPC': 50}
 
 # OSQP solver settings
 osqp_settings = {'verbose': False,
                  'polish': False,
-                 'rho': 1.0}
+                 'rho': 10.}
 
 # Solve all problems
 for problem in problems:
