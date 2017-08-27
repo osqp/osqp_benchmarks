@@ -4,8 +4,6 @@ Solve Lasso problem as parametric QP by updating iteratively lambda
 import numpy as np
 import pandas as pd
 import os
-import solvers.statuses as statuses
-from solvers.osqp import OSQPSolver
 from problems.lasso import LassoExample
 from utils.general import make_sure_path_exists
 import osqp
@@ -40,6 +38,7 @@ class LassoParametric(object):
 
         # Create example instance
         instance = LassoExample(self.dimension)
+        qp = instance.qp_problem
 
         # Create lambda array
         lambda_array = np.logspace(np.log10(self.minimum_lambda_over_max *
@@ -70,15 +69,17 @@ class LassoParametric(object):
                 instance.update_lambda(lambda_val)
 
                 # Solve problem
-                s = OSQPSolver(self.osqp_settings)
-                r = s.solve(instance)
+                m = osqp.OSQP()
+                m.setup(qp['P'], qp['q'], qp['A'], qp['l'], qp['u'],
+                        **self.osqp_settings)
+                r = m.solve()
 
-                solution_dict = {'status': [r.status],
-                                 'run_time': [r.run_time],
-                                 'iter': [r.niter]}
-
-                if solution_dict['status'][0] != statuses.OPTIMAL:
+                if r.info.status != "Solved":
                     print("OSQP no warmstart did not solve the problem")
+
+                solution_dict = {'status': [r.info.status],
+                                 'run_time': [r.info.run_time],
+                                 'iter': [r.info.iter]}
 
                 res_list_no_ws.append(pd.DataFrame(solution_dict))
 
@@ -91,6 +92,7 @@ class LassoParametric(object):
         '''
         Solve problem with warm start
         '''
+
         # Solution directory
         ws_path = os.path.join('.', 'results', 'parametric_problems',
                                'OSQP warmstart',
@@ -120,17 +122,14 @@ class LassoParametric(object):
 
                 # Solve problem
                 r = m.solve()
-                # Get status (use OSQP solver object map from before)
-                status = s.STATUS_MAP.get(r.info.status_val,
-                                          statuses.SOLVER_ERROR)
+
+                if r.info.status != "Solved":
+                    print("OSQP warmstart did not solve the problem")
 
                 # Get results
-                solution_dict = {'status': [status],
+                solution_dict = {'status': [r.info.status],
                                  'run_time': [r.info.run_time],
                                  'iter': [r.info.iter]}
-
-                if solution_dict['status'][0] != statuses.OPTIMAL:
-                    print("OSQP warmstart did not solve the problem")
 
                 res_list_ws.append(pd.DataFrame(solution_dict))
 
@@ -139,3 +138,6 @@ class LassoParametric(object):
 
             # Store file
             res_ws.to_csv(n_file_name, index=False)
+
+        else:
+            res_ws = pd.read_csv(n_file_name)

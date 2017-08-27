@@ -71,7 +71,7 @@ class ControlExample(object):
         self.T = 10
 
         self.qp_problem = self._generate_qp_problem()
-        self.cvxpy_problem, self.cvxpy_variables = \
+        self.cvxpy_problem, self.cvxpy_variables, self.cvxpy_param = \
             self._generate_cvxpy_problem()
 
     @staticmethod
@@ -163,7 +163,8 @@ class ControlExample(object):
         T = self.T
 
         # Initial state
-        x0 = self.x0
+        x0 = cvxpy.Parameter(nx)
+        x0.value = self.x0
 
         # variables
         x = cvxpy.Variable(nx, T + 1)
@@ -196,7 +197,7 @@ class ControlExample(object):
                                 state_constraints +
                                 input_constraints)
 
-        return problem, (x, u)
+        return problem, (x, u), x0
 
     def revert_cvxpy_solution(self):
         '''
@@ -235,3 +236,21 @@ class ControlExample(object):
         b = np.zeros((self.T + 1) * self.nx)
         b[:self.nx] = -x
         return b
+
+    def update_x0(self, x0_new):
+        """
+        Update initial state in the problem
+        """
+
+        # Update internal x0 parameter
+        self.x0 = x0_new
+
+        # Update dynamics in QP problem
+        b_new = self._b(self.x0)
+        self.qp_problem['l'][:(self.T + 1) * self.nx] = b_new
+        self.qp_problem['u'][:(self.T + 1) * self.nx] = b_new
+        self.qp_problem['l_nobounds'][:(self.T + 1) * self.nx] = b_new
+        self.qp_problem['u_nobounds'][:(self.T + 1) * self.nx] = b_new
+
+        # Update parameter in CVXPY problem
+        self.cvxpy_param.value = self.x0
