@@ -9,11 +9,10 @@ This code tests the solvers:
     - qpOASES
 
 '''
-import os
-import pandas as pd
 from benchmark_problems.example import Example
 import solvers.solvers as s
 from utils.general import gen_int_log_space
+from utils.benchmark import get_cumulative_data, compute_performance_profiles
 
 # Define solvers to benchmark
 solvers = [
@@ -57,9 +56,9 @@ problems = [
 problem_dimensions = {'Random QP': gen_int_log_space(10, 2000, 20),
                       'Eq QP': gen_int_log_space(10, 2000, 20),
                       'Portfolio': gen_int_log_space(5, 150, 20),
-                      'Lasso': gen_int_log_space(10, 1000, 20),
-                      'SVM': gen_int_log_space(10, 1000, 20),
-                      'Huber': gen_int_log_space(10, 1000, 20),
+                      'Lasso': gen_int_log_space(10, 300, 20),
+                      'SVM': gen_int_log_space(10, 300, 20),
+                      'Huber': gen_int_log_space(10, 300, 20),
                       'Control': gen_int_log_space(4, 100, 20)}
 
 # Some problems become too big to be executed in parallel and we solve them
@@ -87,19 +86,7 @@ for problem in problems:
 
 
 # Collect cumulative data for each solver
-for solver in solvers:
-    # Path where solver results are stored
-    path = os.path.join('.', 'results', 'benchmark_problems', solver)
+get_cumulative_data(solvers, problems)
 
-    # Initialize cumulative results
-    results = []
-    for problem in problems:
-        file_name = os.path.join(path, problem, 'full.csv')
-        results.append(pd.read_csv(file_name))
-
-    # Create cumulative dataframe
-    df = pd.concat(results)
-
-    # Store dataframe into results
-    solver_file_name = os.path.join(path, 'results.csv')
-    df.to_csv(solver_file_name, index=False)
+# Compute performance profiles
+compute_performance_profiles(solvers)
