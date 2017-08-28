@@ -21,7 +21,7 @@ class MPCParametric(object):
             osqp_settings: osqp solver settings
             dimension: leading dimension for the problem
             minimum_lambda_over_max: min ratio between lambda and lambda_max
-            n_problem: number of lasso problems to solve
+            n_simulation: number of MPC problems to solve
         """
         self.osqp_settings = osqp_settings
         self.dimension = dimension
@@ -119,7 +119,6 @@ class MPCParametric(object):
 
         if not os.path.isfile(n_file_name):
             # Setup solver
-            qp = instance.qp_problem
             m = osqp.OSQP()
             m.setup(qp['P'], qp['q'], qp['A'], qp['l'], qp['u'],
                     **self.osqp_settings)

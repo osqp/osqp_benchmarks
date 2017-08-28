@@ -17,14 +17,16 @@ PROBLEMS_MAP = {'Lasso': LassoParametric,
                 'Portfolio': PortfolioParametric}
 
 problems = [
-            'Lasso',
-            'MPC',
-            # 'Portoflio'
+            # 'Lasso',
+            # 'MPC',
+            'Portfolio'
             ]
 
 # Problem dimensions
 dimensions = {'Lasso': 50,
-              'MPC': 50}
+              'MPC': 50,
+              'Portfolio': 100
+              }
 
 # OSQP solver settings
 osqp_settings = {'verbose': False,

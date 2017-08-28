@@ -7,7 +7,7 @@ class PortfolioExample(object):
     '''
     Portfolio QP example
     '''
-    def __init__(self, k, seed=1):
+    def __init__(self, k, seed=1, n=None):
         '''
         Generate problem in QP format and CVXPY format
         '''
@@ -15,7 +15,10 @@ class PortfolioExample(object):
         np.random.seed(seed)
 
         self.k = k               # Number of factors
-        self.n = k * 100         # Number of assets
+        if n is None:            # Number of assets
+            self.n = k * 100
+        else:
+            self.n = n
 
         # Generate data
         self.F = spa.random(self.n, self.k, density=0.5,
@@ -26,7 +29,8 @@ class PortfolioExample(object):
         self.gamma = 1.0
 
         self.qp_problem = self._generate_qp_problem()
-        self.cvxpy_problem = self._generate_cvxpy_problem()
+        self.cvxpy_problem, self.cvxpy_param = \
+            self._generate_cvxpy_problem()
 
     @staticmethod
     def name():
@@ -90,20 +94,22 @@ class PortfolioExample(object):
         Generate QP problem
         '''
 
-        n_var = self.F.shape[0]
-        m_var = self.F.shape[1]
-        x = cvxpy.Variable(n_var)
-        y = cvxpy.Variable(m_var)
+        x = cvxpy.Variable(self.n)
+        y = cvxpy.Variable(self.k)
+
+        # Create parameters m
+        mu = cvxpy.Parameter(self.n)
+        mu.value = self.mu
 
         objective = cvxpy.Minimize(cvxpy.quad_form(x, self.D) +
-                                   cvxpy.quad_form(y, spa.eye(m_var)) +
-                                   - 1 / self.gamma * (self.mu * x))
-        constraints = [np.ones(n_var) * x == 1,
+                                   cvxpy.quad_form(y, spa.eye(self.k)) +
+                                   - 1 / self.gamma * (mu.T * x))
+        constraints = [np.ones(self.n) * x == 1,
                        self.F.T * x == y,
                        0 <= x, x <= 1]
         problem = cvxpy.Problem(objective, constraints)
 
-        return problem
+        return problem, mu
 
     def revert_cvxpy_solution(self):
         '''
@@ -124,3 +130,40 @@ class PortfolioExample(object):
                             constraints[2].dual_value.A1))
 
         return x, y
+
+    def update_parameters(self, mu, F=None, D=None):
+        """
+        Update problem parameters with new mu, F, D
+        """
+
+        # Update internal parameters
+        self.mu = mu
+        if F is not None:
+            if F.shape == self.F.shape and \
+                    all(F.indptr == self.F.indptr) and \
+                    all(F.indices == self.F.indices):
+                # Check if F has same sparsity pattern as self.D
+                self.F = F
+            else:
+                raise ValueError("F sparsity pattern changed")
+        if D is not None:
+            if D.shape == self.D.shape and \
+                    all(D.indptr == self.D.indptr) and \
+                    all(D.indices == self.D.indices):
+                # Check if D has same sparsity pattern as self.D
+                self.D = D
+            else:
+                raise ValueError("D sparsity pattern changed")
+
+        # Update parameters in QP problem
+        if F is None and D is None:
+            # Update only q
+            self.qp_problem['q'] = np.append(- self.mu / self.gamma,
+                                             np.zeros(self.k))
+            # Update parameter in CVXPY problem
+            self.cvxpy_param.value = self.mu
+        else:
+            # Generate problem from scratch
+            self.qp_problem = self._generate_qp_problem()
+            self.cvxpy_problem, self.cvxpy_param = \
+                self._generate_cvxpy_problem()

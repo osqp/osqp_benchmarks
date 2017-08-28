@@ -61,6 +61,9 @@ problem_dimensions = {'Random QP': gen_int_log_space(10, 2000, 20),
                       'SVM': gen_int_log_space(10, 1000, 20),
                       'Huber': gen_int_log_space(10, 1000, 20),
                       'Control': gen_int_log_space(4, 100, 20)}
+
+# Some problems become too big to be executed in parallel and we solve them
+# serially
 problem_parallel = {'Random QP': True,
                     'Eq QP': True,
                     'Portfolio': True,
