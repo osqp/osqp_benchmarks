@@ -92,3 +92,21 @@ def compute_performance_profiles(solvers):
     # plt.grid()
     # plt.xscale('log')
     # plt.show(block=False)
+
+
+def compute_failure_rates(solvers):
+    """
+    Compute and show failure rates
+    """
+    print("")
+    print('[Failure rates]')
+    for solver in solvers:
+        results_file = os.path.join('.', 'results', 'benchmark_problems',
+                                    solver, 'results.csv')
+        df = pd.read_csv(results_file)
+
+        n_problems = len(df)
+        n_failed_problems = np.sum(df['status'] == statuses.SOLVER_ERROR)
+        failure_rate = n_failed_problems / n_problems
+
+        print(" - %s = %.2f %%" % (solver, failure_rate))

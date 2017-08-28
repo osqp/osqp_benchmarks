@@ -12,7 +12,9 @@ This code tests the solvers:
 from benchmark_problems.example import Example
 import solvers.solvers as s
 from utils.general import gen_int_log_space
-from utils.benchmark import get_cumulative_data, compute_performance_profiles
+from utils.benchmark import get_cumulative_data, \
+    compute_performance_profiles, \
+    compute_failure_rates
 
 # Define solvers to benchmark
 solvers = [
@@ -87,6 +89,9 @@ for problem in problems:
 
 # Collect cumulative data for each solver
 get_cumulative_data(solvers, problems)
+
+# Compute failure rates
+compute_failure_rates(solvers)
 
 # Compute performance profiles
 compute_performance_profiles(solvers)
