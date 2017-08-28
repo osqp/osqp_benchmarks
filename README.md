@@ -24,7 +24,7 @@ They include
 We generate the problems using the scripts in the `problems/` folder.
 
 # Scripts
-The script `run_benchmark_problems.py` runs all the examples for the specified dimensions and reports the data of each solver in the folder `results/benchmark_problems/SOLVER_NAME/full.csv`.
+The script `run_benchmark_problems.py` runs all the examples for the specified dimensions and reports the data of each solver in the folder `results/benchmark_problems/SOLVER_NAME/results.csv`.
 
 The script `run_parametric_problems.py` runs the OSQP solver with and without warm-starting for three parametric examples of
 -   Portfolio

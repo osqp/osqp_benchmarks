@@ -33,7 +33,7 @@ class PortfolioParametric(object):
         self.n_qp_per_month = 20  # Number of trading days
         self.n_qp_per_update = self.n_qp_per_month * \
             n_months_per_risk_model_update
-        self.n_problems = n_years * 250
+        self.n_problems = n_years * 240
 
     def solve(self):
         """
