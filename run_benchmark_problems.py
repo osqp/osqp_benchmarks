@@ -56,9 +56,9 @@ problems = [
 problem_dimensions = {'Random QP': gen_int_log_space(10, 2000, 20),
                       'Eq QP': gen_int_log_space(10, 2000, 20),
                       'Portfolio': gen_int_log_space(5, 150, 20),
-                      'Lasso': gen_int_log_space(10, 300, 20),
-                      'SVM': gen_int_log_space(10, 300, 20),
-                      'Huber': gen_int_log_space(10, 300, 20),
+                      'Lasso': gen_int_log_space(10, 200, 20),
+                      'SVM': gen_int_log_space(10, 200, 20),
+                      'Huber': gen_int_log_space(10, 200, 20),
                       'Control': gen_int_log_space(4, 100, 20)}
 
 # Some problems become too big to be executed in parallel and we solve them
@@ -66,9 +66,9 @@ problem_dimensions = {'Random QP': gen_int_log_space(10, 2000, 20),
 problem_parallel = {'Random QP': True,
                     'Eq QP': True,
                     'Portfolio': True,
-                    'Lasso': False,
-                    'SVM': False,
-                    'Huber': False,
+                    'Lasso': True,
+                    'SVM': True,
+                    'Huber': True,
                     'Control': True}
 
 # Small dimensions (to comment when running on the server)

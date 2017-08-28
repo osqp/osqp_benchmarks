@@ -1,7 +1,7 @@
 import os
 import pandas as pd
 import numpy as np
-import solvers.statuses as solver_statuses
+import solvers.statuses as statuses
 
 MAX_TIMING = 1e8
 
@@ -27,46 +27,68 @@ def get_cumulative_data(solvers, problems):
 
 
 def compute_performance_profiles(solvers):
-    timings = {}
-    statuses = {}
+    t = {}
+    status = {}
 
-    # Get timings and statuses
+    # Get time and status
     for solver in solvers:
         path = os.path.join('.', 'results', 'benchmark_problems',
                             solver, 'results.csv')
         df = pd.read_csv(path)
-        timings[solver] = df['run_time'].values
-        statuses[solver] = df['status'].values
 
-        # Set maximum timing for solvers that did not succeed
-        for idx in range(len(timings['solver'])):
-            if statuses[solver][idx] != solver_statuses.OPTIMAL:
-                timings[solver][idx] = MAX_TIMING
+        # Get total number of problems
+        n_problems = len(df)
 
-    # Get total number of problems
-    n_problems = len(df)
+        t[solver] = df['run_time'].values
+        status[solver] = df['status'].values
 
-    t = {}  # Dictionary relative timings for each solver/problem
+        # Set maximum time for solvers that did not succeed
+        for idx in range(n_problems):
+            if status[solver][idx] != statuses.OPTIMAL:
+                t[solver][idx] = MAX_TIMING
+
+    r = {}  # Dictionary of relative times for each solver/problem
     for s in solvers:
-        t[s] = np.array(n_problems)
+        r[s] = np.zeros(n_problems)
 
     # Iterate over all problems to find best timing between solvers
     for p in range(n_problems):
 
         # Get minimum time
-        min_time = np.min([timings[s][p] for s in solvers])
+        min_time = np.min([t[s][p] for s in solvers])
 
-        # Normalize timings for minimum time
+        # Normalize t for minimum time
         for s in solvers:
-            t[s][p] /= min_time
+            r[s][p] = t[s][p]/min_time
 
     # Compute curve for all solvers
-    tau = np.logspace(0, 4, 1000)
-    r = {}  # Dictionary of all the curves
+    n_tau = 1000
+    tau_vec = np.logspace(0, 4, n_tau)
+    rho = {'tau': tau_vec}  # Dictionary of all the curves
 
     for s in solvers:
+        rho[s] = np.zeros(n_tau)
+        for tau_idx in range(n_tau):
+            count_problems = 0  # Count number of problems with t[p, s] <= tau
+            for p in range(n_problems):
+                if r[s][p] <= tau_vec[tau_idx]:
+                    count_problems += 1
+            rho[s][tau_idx] = count_problems / n_problems
 
+    # Store final pandas dataframe
+    df_performance_profiles = pd.DataFrame(rho)
+    performance_profiles_file = os.path.join('.', 'results',
+                                             'benchmark_problems',
+                                             'performance_profiles.csv')
+    df_performance_profiles.to_csv(performance_profiles_file, index=False)
 
-        #
-
-            # CONTINUE
+    # Plot performance profiles
+    # import matplotlib.pylab as plt
+    # for s in solvers:
+    #     plt.plot(tau_vec, rho[s], label=s)
+    # plt.legend(loc='best')
+    # plt.ylabel(r'$\rho_{s}$')
+    # plt.xlabel(r'$\tau$')
+    # plt.grid()
+    # plt.xscale('log')
+    # plt.show(block=False)
