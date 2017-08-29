@@ -15,12 +15,13 @@ from utils.general import gen_int_log_space
 from utils.benchmark import get_cumulative_data, \
     compute_performance_profiles, \
     compute_failure_rates, \
-    compute_polish_statistics
+    compute_polish_statistics, \
+    constrain_execution_time
 
 # Define solvers to benchmark
 solvers = [
-            s.OSQP,
-            s.OSQP_polish,
+            # s.OSQP,
+            # s.OSQP_polish,
             s.GUROBI,
             s.MOSEK,
             s.ECOS,
@@ -76,8 +77,8 @@ problem_parallel = {'Random QP': True,
                     'Control': True}
 
 # Small dimensions (to comment when running on the server)
-for key in problem_dimensions:
-    problem_dimensions[key] = [4, 5]
+# for key in problem_dimensions:
+#     problem_dimensions[key] = [4, 5]
 
 # Run all examples
 for problem in problems:
@@ -101,3 +102,5 @@ compute_performance_profiles(solvers)
 # Compute polish statistics
 if 'OSQP' in solvers and 'OSQP_polish' in solvers:
     compute_polish_statistics()
+
+# constrain_execution_time(solvers, problems, problem_dimensions, time_limit)

@@ -148,3 +148,30 @@ def compute_polish_statistics():
         print("\n[OSQP Polish benchmarks]")
         print("  - Median time increase:  %.2fx" % np.median(time_increase))
         print("  - Percentage of success: %.2f %%" % (polish_successs * 100))
+
+
+def constrain_execution_time(solvers, problems,
+                             problem_dimensions, time_limit):
+    """
+    Change status to solver_error when execution time exceeds time_limit
+    """
+
+    for solver in solvers:
+        for problem in problems:
+            for dim in problem_dimensions[problem]:
+                file_to_read = os.path.join('.', 'results',
+                                            'benchmark_problems',
+                                            solver,
+                                            problem,
+                                            'n%i.csv' % dim)
+                df = pd.read_csv(file_to_read)
+                n_instances = len(df)
+                status_list = []
+                for i in range(n_instances):
+                    if df['run_time'].values[i] > time_limit:
+                        status_list.append(statuses.SOLVER_ERROR)
+                    else:
+                        status_list.append(df['status'].values[i])
+
+                df['status'] = status_list
+                df.to_csv(file_to_read, index=False)
