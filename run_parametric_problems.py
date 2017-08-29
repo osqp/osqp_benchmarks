@@ -18,8 +18,8 @@ PROBLEMS_MAP = {'Lasso': LassoParametric,
 
 problems = [
             # 'Lasso',
-            # 'MPC',
-            'Portfolio'
+            'MPC',
+            # 'Portfolio'
             ]
 
 # Problem dimensions

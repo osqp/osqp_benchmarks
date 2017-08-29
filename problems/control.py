@@ -30,8 +30,8 @@ class ControlExample(object):
         # Enforce eigenvalues to be maximum norm 1
         for i in range(len(lambda_values)):
             lambda_values[i] = lambda_values[i] \
-                if abs_lambda_values[i] < 1 - 1e-05 else \
-                lambda_values[i] / (abs_lambda_values[i] + 1e-05)
+                if abs_lambda_values[i] < 1 - 1e-02 else \
+                lambda_values[i] / (abs_lambda_values[i] + 1e-02)
 
         # Reconstruct A = V * Lambda * V^{-1}
         self.A = spa.csc_matrix(
@@ -54,10 +54,10 @@ class ControlExample(object):
         # self.QN = 10 * self.Q
 
         # Input ad state bounds
-        self.umin = - np.random.rand(self.nu)
-        self.umax = np.random.rand(self.nu)
-        self.xmin = - np.random.rand(self.nx)
-        self.xmax = np.random.rand(self.nx)
+        self.umin = - .1 * np.random.rand(self.nu)
+        self.umax = .1 * np.random.rand(self.nu)
+        self.xmin = -1.0 - np.random.rand(self.nx)
+        self.xmax = 1.0 + np.random.rand(self.nx)
 
         # Initial state (constrain to be within lower and upper bound)
         self.x0 = np.random.rand(self.nx)

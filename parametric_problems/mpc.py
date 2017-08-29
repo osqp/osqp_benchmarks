@@ -97,7 +97,7 @@ class MPCParametric(object):
 
             # Plot results
             # import matplotlib.pylab as plt
-            # plt.figure(0)
+            # plt.figure(1)
             # plt.plot(X_no_ws.T)
             # plt.title("No Warm Start")
             # plt.show(block=False)
@@ -165,9 +165,14 @@ class MPCParametric(object):
             # Store file
             res_ws.to_csv(n_file_name, index=False)
 
-            # Plot results
+            # # Plot results
             # import matplotlib.pylab as plt
-            # plt.figure(1)
+            # plt.figure(3)
             # plt.plot(X_ws.T)
-            # plt.title("Warm Start")
+            # plt.title("X Warm Start")
             # plt.show(block=False)
+            #
+            # plt.figure(4)
+            # plt.plot(U_ws.T)
+            # plt.title("U Warm Start")
+            # plt.show()
