@@ -34,12 +34,14 @@ class OSQPSolver(object):
             Results structure
         '''
         problem = example.qp_problem
+        settings = self._settings.copy()
+        time_limit = settings.pop('time_limit', None)
 
         # Setup OSQP
         m = osqp.OSQP()
         m.setup(problem['P'], problem['q'], problem['A'], problem['l'],
                 problem['u'],
-                **self._settings)
+                **settings)
 
         # Solve
         results = m.solve()
@@ -50,6 +52,11 @@ class OSQPSolver(object):
                                           results.x,
                                           results.y):
                 status = s.SOLVER_ERROR
+
+        # Verify solver time
+        if time_limit is not None:
+            if results.info.run_time > time_limit:
+                status = s.TIME_LIMIT
 
         return_results = Results(status,
                                  results.info.obj_val,

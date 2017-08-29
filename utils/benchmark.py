@@ -44,7 +44,7 @@ def compute_performance_profiles(solvers):
 
         # Set maximum time for solvers that did not succeed
         for idx in range(n_problems):
-            if status[solver][idx] != statuses.OPTIMAL:
+            if status[solver][idx] not in statuses.SOLUTION_PRESENT:
                 t[solver][idx] = MAX_TIMING
 
     r = {}  # Dictionary of relative times for each solver/problem
@@ -106,7 +106,45 @@ def compute_failure_rates(solvers):
         df = pd.read_csv(results_file)
 
         n_problems = len(df)
-        n_failed_problems = np.sum(df['status'] == statuses.SOLVER_ERROR)
+
+        failed_statuses = np.logical_and(*[df['status'].values != s
+                                           for s in statuses.SOLUTION_PRESENT])
+        n_failed_problems = np.sum(failed_statuses)
         failure_rate = n_failed_problems / n_problems
 
-        print(" - %s = %.2f %%" % (solver, failure_rate))
+        print(" - %s = %.4f %%" % (solver, 100 * failure_rate))
+
+
+def compute_polish_statistics():
+
+        # Path where solver results are stored
+        path_osqp = os.path.join('.', 'results', 'benchmark_problems',
+                                 'OSQP', 'results.csv')
+        path_osqp_polish = os.path.join('.', 'results', 'benchmark_problems',
+                                        'OSQP_polish', 'results.csv')
+
+        # Load data frames
+        df_osqp = pd.read_csv(path_osqp)
+        df_osqp_polish = pd.read_csv(path_osqp_polish)
+
+        # Take only problems where osqp has success
+        successful_problems = df_osqp['status'] == statuses.OPTIMAL
+        df_osqp = df_osqp.loc[successful_problems]
+        df_osqp_polish = df_osqp_polish.loc[successful_problems]
+        n_problems = len(df_osqp)
+
+        # Compute time increase
+        osqp_time = df_osqp['run_time'].values
+        osqp_polish_time = df_osqp_polish['run_time'].values
+        time_increase = np.zeros(n_problems)
+
+        for i in range(n_problems):
+            time_increase = osqp_polish_time / osqp_time
+
+        polish_successs = np.sum(df_osqp_polish['status_polish'] == 1) \
+            / n_problems
+
+        # Print results
+        print("\n[OSQP Polish benchmarks]")
+        print("  - Median time increase:  %.2fx" % np.median(time_increase))
+        print("  - Percentage of success: %.2f %%" % (polish_successs * 100))

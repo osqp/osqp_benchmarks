@@ -121,7 +121,7 @@ class MOSEKSolver(object):
             if param == 'verbose':
                 if value is False:
                     self._handle_str_param(task, 'MSK_IPAR_LOG'.strip(), 0)
-            else:
+            elif param != 'time_limit':
                 if isinstance(param, str):
                     self._handle_str_param(task, param.strip(), value)
                 else:
@@ -172,6 +172,11 @@ class MOSEKSolver(object):
 
             if not is_qp_solution_optimal(p, x, y):
                 status = s.SOLVER_ERROR
+
+            # Validate execution time
+            if 'time_limit' in self._settings:
+                if cputime > self._settings['time_limit']:
+                    status = s.TIME_LIMIT
 
             return Results(status, objval, x, y,
                            cputime, total_iter)

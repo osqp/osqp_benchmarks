@@ -108,7 +108,7 @@ class GUROBISolver(object):
             if self._settings['verbose'] == 0:
                 model.setParam("OutputFlag", 0)
         for param, value in self._settings.items():  # Set other parameters
-            if param is not "verbose":
+            if (param != "verbose") and (param != "time_limit"):
                 model.setParam(param, value)
 
         # Update model
@@ -145,6 +145,11 @@ class GUROBISolver(object):
 
             if not is_qp_solution_optimal(p, x, y):
                 status = s.SOLVER_ERROR
+
+            # Validate execution time
+            if 'time_limit' in self._settings:
+                if run_time > self._settings['time_limit']:
+                    status = s.TIME_LIMIT
 
             return Results(status, objval, x, y,
                            run_time, niter)

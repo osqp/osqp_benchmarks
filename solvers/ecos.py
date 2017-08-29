@@ -68,6 +68,11 @@ class ECOSSolver(object):
         if not is_qp_solution_optimal(example.qp_problem, x, y):
             status = s.SOLVER_ERROR
 
+        # Validate execution time
+        if 'time_limit' in self._settings:
+            if run_time > self._settings['time_limit']:
+                status = s.TIME_LIMIT
+
         return Results(status,
                        obj_val,
                        x,

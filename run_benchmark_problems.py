@@ -14,27 +14,29 @@ import solvers.solvers as s
 from utils.general import gen_int_log_space
 from utils.benchmark import get_cumulative_data, \
     compute_performance_profiles, \
-    compute_failure_rates
+    compute_failure_rates, \
+    compute_polish_statistics
 
 # Define solvers to benchmark
 solvers = [
-            # s.OSQP,
-            # s.OSQP_polish,
+            s.OSQP,
+            s.OSQP_polish,
             s.GUROBI,
             s.MOSEK,
             s.ECOS,
             s.qpOASES
            ]
 
+time_limit = 1000.  # Seconds
 settings = {
-             # s.OSQP: {'polish': False},
-             # s.OSQP_polish: {'polish': True},
-             s.GUROBI: {},
-             s.MOSEK: {},
-             s.ECOS: {},
-             s.qpOASES: {'nWSR': 1000000,    # Number of working set recalcs
-                         'cputime': 1000.     # Seconds (N.B. Must be float!)
-                         }
+             s.OSQP: {'polish': False,
+                      'time_limit': time_limit},
+             s.OSQP_polish: {'polish': True,
+                             'time_limit': time_limit},
+             s.GUROBI: {'time_limit': time_limit},
+             s.MOSEK: {'time_limit': time_limit},
+             s.ECOS: {'time_limit': time_limit},
+             s.qpOASES: {'time_limit': time_limit}
             }
 
 # Number of instances per different dimension
@@ -95,3 +97,7 @@ compute_failure_rates(solvers)
 
 # Compute performance profiles
 compute_performance_profiles(solvers)
+
+# Compute polish statistics
+if 'OSQP' in solvers and 'OSQP_polish' in solvers:
+    compute_polish_statistics()

@@ -89,7 +89,7 @@ class qpOASESSolver(object):
             if param == 'verbose':
                 if value is False:
                     options.printLevel = qpoases.PyPrintLevel.NONE
-            elif param == 'cputime':
+            elif param == 'time_limit':
                 qpoases_cpu_time = np.array([value])
             elif param == 'nWSR':
                 qpoases_nWSR = np.array([value])
@@ -98,13 +98,13 @@ class qpOASESSolver(object):
 
         qpoases_m.setOptions(options)
 
-        if 'cputime' not in self._settings:
+        if 'time_limit' not in self._settings:
             # Set default to max 10 seconds in runtime
             qpoases_cpu_time = np.array([10.])
 
         if 'nWSR' not in self._settings:
-            # Set default to max 1000 working set recalculations
-            qpoases_nWSR = np.array([1000])
+            # Set default to max 1000000 working set recalculations
+            qpoases_nWSR = np.array([1000000])
 
         # Solve problem
         status = qpoases_m.init(P, q, A, lx, ux, l, u,
