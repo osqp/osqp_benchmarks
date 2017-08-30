@@ -15,8 +15,7 @@ from utils.general import gen_int_log_space
 from utils.benchmark import get_cumulative_data, \
     compute_performance_profiles, \
     compute_failure_rates, \
-    compute_polish_statistics, \
-    constrain_execution_time
+    compute_polish_statistics
 
 # Define solvers to benchmark
 solvers = [
@@ -64,7 +63,7 @@ problem_dimensions = {'Random QP': gen_int_log_space(10, 2000, 20),
                       'Lasso': gen_int_log_space(10, 200, 20),
                       'SVM': gen_int_log_space(10, 200, 20),
                       'Huber': gen_int_log_space(10, 200, 20),
-                      'Control': gen_int_log_space(4, 100, 20)}
+                      'Control': gen_int_log_space(5, 100, 20)}
 
 # Some problems become too big to be executed in parallel and we solve them
 # serially

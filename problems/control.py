@@ -16,7 +16,7 @@ class ControlExample(object):
         np.random.seed(seed)
 
         # Generate random dynamics
-        self.nx = n            # States
+        self.nx = int(n)       # States
         self.nu = int(n / 2)   # Inputs
 
         self.A = spa.eye(self.nx) + .1 * spa.random(self.nx, self.nx,
