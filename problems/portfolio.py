@@ -14,11 +14,11 @@ class PortfolioExample(object):
         # Set random seed
         np.random.seed(seed)
 
-        self.k = k               # Number of factors
-        if n is None:            # Number of assets
-            self.n = k * 100
+        self.k = int(k)               # Number of factors
+        if n is None:                 # Number of assets
+            self.n = int(k * 100)
         else:
-            self.n = n
+            self.n = int(n)
 
         # Generate data
         self.F = spa.random(self.n, self.k, density=0.5,

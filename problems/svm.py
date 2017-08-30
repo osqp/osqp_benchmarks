@@ -14,8 +14,8 @@ class SVMExample(object):
         # Set random seed
         np.random.seed(seed)
 
-        self.n = n               # Number of features
-        self.m = self.n * 100    # Number of data-points
+        self.n = int(n)               # Number of features
+        self.m = int(self.n * 100)    # Number of data-points
 
         # Generate data
         self.N = int(self.m / 2)

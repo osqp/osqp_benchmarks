@@ -17,7 +17,7 @@ class EqQPExample(object):
         m = int(n/2)
 
         # Generate problem data
-        self.n = n
+        self.n = int(n)
         self.m = m
         P = spa.random(n, n, density=0.5,
                        data_rvs=np.random.randn,

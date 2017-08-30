@@ -14,8 +14,8 @@ class LassoExample(object):
         # Set random seed
         np.random.seed(seed)
 
-        self.n = n               # Number of features
-        self.m = self.n * 100    # Number of data-points
+        self.n = int(n)               # Number of features
+        self.m = int(self.n * 100)    # Number of data-points
 
         self.Ad = spa.random(self.m, self.n, density=0.5,
                              data_rvs=np.random.randn)
