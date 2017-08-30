@@ -44,7 +44,7 @@ class ECOSSolver(object):
 
         try:
             problem.solve(solver=cvxpy.ECOS, verbose=verbose)
-        except:
+        except cvxpy.SolverError:
             if 'verbose' in self._settings:  # if verbose is null, suppress it
                 if self._settings['verbose']:
                     print("Error in ECOS solution\n")
