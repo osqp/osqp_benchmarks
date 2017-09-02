@@ -17,9 +17,9 @@ PROBLEMS_MAP = {'Lasso': LassoParametric,
                 'Portfolio': PortfolioParametric}
 
 problems = [
-            # 'Lasso',
+            'Lasso',
             'MPC',
-            # 'Portfolio'
+            'Portfolio'
             ]
 
 # Problem dimensions
@@ -31,7 +31,7 @@ dimensions = {'Lasso': 50,
 # OSQP solver settings
 osqp_settings = {'verbose': False,
                  'polish': False,
-                 'rho': 10.}
+                 'rho': 0.1}
 
 # Solve all problems
 for problem in problems:

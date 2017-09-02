@@ -6,6 +6,7 @@ import pandas as pd
 import os
 from problems.lasso import LassoExample
 from utils.general import make_sure_path_exists
+# import osqppurepy as osqp
 import osqp
 
 

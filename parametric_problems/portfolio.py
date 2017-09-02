@@ -6,6 +6,7 @@ import numpy as np
 from utils.general import make_sure_path_exists
 import pandas as pd
 from problems.portfolio import PortfolioExample
+# import osqppurepy as osqp
 import osqp
 
 
