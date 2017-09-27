@@ -24,10 +24,14 @@ def print_results_parametric(problem, dimension):
     print('  OSQP (no warm start): ')
     print('   - median time: %.4e sec' % no_ws_df['run_time'].median())
     print('   - mean time:   %.4e sec' % no_ws_df['run_time'].mean())
+    print('   - median iter: %d' % no_ws_df['iter'].median())
+    print('   - mean iter:   %d' % no_ws_df['iter'].mean())
 
     print('  OSQP (warm start): ')
     print('   - median time: %.4e sec' % ws_df['run_time'].median())
     print('   - mean time:   %.4e sec' % ws_df['run_time'].mean())
+    print('   - median iter: %d' % ws_df['iter'].median())
+    print('   - mean iter:   %d' % ws_df['iter'].mean())
 
     print("  Speedups")
     print('   - median time: %.2f x' %

@@ -142,7 +142,7 @@ class PortfolioParametric(object):
                 r = m.solve()
 
                 if r.info.status != "Solved":
-                    print("OSQP no warmstart did not solve the problem")
+                    print("OSQP warmstart did not solve the problem")
 
                 # Get results
                 solution_dict = {'status': [r.info.status],

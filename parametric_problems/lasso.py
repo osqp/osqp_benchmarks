@@ -50,6 +50,7 @@ class LassoParametric(object):
         '''
         Solve problem without warm start
         '''
+        #  print("Solving without warm start")
         # Solution directory
         no_ws_path = os.path.join('.', 'results', 'parametric_problems',
                                   'OSQP no warmstart',
@@ -75,6 +76,9 @@ class LassoParametric(object):
                         **self.osqp_settings)
                 r = m.solve()
 
+                # DEBUG
+                #  print("Lambda = %.4e,\t niter = %d" % (lambda_val, r.info.iter))
+
                 if r.info.status != "Solved":
                     print("OSQP no warmstart did not solve the problem")
 
@@ -94,6 +98,7 @@ class LassoParametric(object):
         Solve problem with warm start
         '''
 
+        #  print("Solving with warm start")
         # Solution directory
         ws_path = os.path.join('.', 'results', 'parametric_problems',
                                'OSQP warmstart',
@@ -105,6 +110,9 @@ class LassoParametric(object):
 
         # Check if solution already exists
         n_file_name = os.path.join(ws_path, 'n%i.csv' % self.dimension)
+
+        # Reset problem to first instance
+        instance.update_lambda(lambda_array[0])
 
         # Setup solver
         qp = instance.qp_problem
@@ -123,6 +131,9 @@ class LassoParametric(object):
 
                 # Solve problem
                 r = m.solve()
+                
+                # DEBUG
+                #  print("Lambda = %.4e,\t niter = %d" % (lambda_val, r.info.iter))
 
                 if r.info.status != "Solved":
                     print("OSQP warmstart did not solve the problem")

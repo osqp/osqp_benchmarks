@@ -19,8 +19,8 @@ from utils.benchmark import get_cumulative_data, \
 
 # Define solvers to benchmark
 solvers = [
-            # s.OSQP,
-            # s.OSQP_polish,
+            s.OSQP,
+            s.OSQP_polish,
             s.GUROBI,
             s.MOSEK,
             s.ECOS,
@@ -54,7 +54,7 @@ problems = [
             'Lasso',
             'SVM',
             'Huber',
-            'Control'
+            #  'Control'
             ]
 
 problem_dimensions = {'Random QP': gen_int_log_space(10, 2000, 20),
