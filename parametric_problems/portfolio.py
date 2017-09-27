@@ -35,6 +35,7 @@ class PortfolioParametric(object):
         self.n_qp_per_update = self.n_qp_per_month * \
             n_months_per_risk_model_update
         self.n_problems = n_years * 240
+        self.alpha = 0.1  # Relaxation parameter between new data nad old ones
 
     def solve(self):
         """
@@ -48,10 +49,15 @@ class PortfolioParametric(object):
 
         # Store number of nonzeros in F and D for updates
         nnzF = instance.F.nnz
+        
+        # Store alpha
+        alpha = self.alpha
 
         '''
         Solve problem without warm start
         '''
+        print("Solving without warm start")
+
         # Solution directory
         no_ws_path = os.path.join('.', 'results', 'parametric_problems',
                                   'OSQP no warmstart',
@@ -76,6 +82,9 @@ class PortfolioParametric(object):
                         **self.osqp_settings)
                 r = m.solve()
 
+                # DEBUG
+                print("niter = %d" % r.info.iter)
+
                 solution_dict = {'status': [r.info.status],
                                  'run_time': [r.info.run_time],
                                  'iter': [r.info.iter],
@@ -87,18 +96,24 @@ class PortfolioParametric(object):
                 res_list_no_ws.append(pd.DataFrame(solution_dict))
 
                 # Update model
+                current_mu = instance.mu
+                current_F_data = instance.F.data
+                current_D_data = instance.D.data
+
                 if i % self.n_qp_per_update == 0:
+                    print("Update everything: mu, F, D") 
                     # Update everything
-                    new_mu = np.random.randn(instance.n)
+                    new_mu = alpha * np.random.randn(instance.n) + (1 - alpha) * current_mu
                     new_F = instance.F.copy()
-                    new_F.data = np.random.randn(nnzF)
+                    new_F.data = alpha * np.random.randn(nnzF) + (1 - alpha) * current_F_data
                     new_D = instance.D.copy()
-                    new_D.data = np.random.rand(instance.n) * \
-                        np.sqrt(instance.k)
+                    new_D.data = alpha * np.random.rand(instance.n) * \
+                        np.sqrt(instance.k) + (1 - alpha) * current_D_data
                     instance.update_parameters(new_mu, new_F, new_D)
                 else:
+                    print("Update only mu") 
                     # Update only mu
-                    new_mu = np.random.randn(instance.n)
+                    new_mu = alpha * np.random.randn(instance.n) + (1 - alpha) * current_mu
                     instance.update_parameters(new_mu)
 
             # Get full warm-start
@@ -117,6 +132,8 @@ class PortfolioParametric(object):
         '''
         Solve problem with warm start
         '''
+        print("Solving with warm start")
+
         # Solution directory
         ws_path = os.path.join('.', 'results', 'parametric_problems',
                                'OSQP warmstart',
@@ -141,6 +158,9 @@ class PortfolioParametric(object):
                 # Solve problem
                 r = m.solve()
 
+                # DEBUG
+                print("niter = %d" % r.info.iter)
+
                 if r.info.status != "Solved":
                     print("OSQP warmstart did not solve the problem")
 
@@ -153,25 +173,30 @@ class PortfolioParametric(object):
                 res_list_ws.append(pd.DataFrame(solution_dict))
 
                 # Update model
-                if i % self.n_qp_per_update == 0:
-                    # Update everything
-                    new_mu = np.random.randn(instance.n)
-                    new_F = instance.F.copy()
-                    new_F.data = np.random.randn(nnzF)
-                    new_D = instance.D.copy()
-                    new_D.data = np.random.rand(instance.n) * \
-                        np.sqrt(instance.k)
-                    instance.update_parameters(new_mu, new_F, new_D)
+                current_mu = instance.mu
+                current_F_data = instance.F.data
+                current_D_data = instance.D.data
 
+                if i % self.n_qp_per_update == 0:
+                    print("Update everything: mu, F, D") 
+                    # Update everything
+                    new_mu = alpha * np.random.randn(instance.n) + (1 - alpha) * current_mu
+                    new_F = instance.F.copy()
+                    new_F.data = alpha * np.random.randn(nnzF) + (1 - alpha) * current_F_data
+                    new_D = instance.D.copy()
+                    new_D.data = alpha * np.random.rand(instance.n) * \
+                        np.sqrt(instance.k) + (1 - alpha) * current_D_data
+                    instance.update_parameters(new_mu, new_F, new_D)
                     # Update solver
                     m.update(q=instance.qp_problem['q'],
                              Px=instance.qp_problem['P'].data,
                              Ax=instance.qp_problem['A'].data)
-
                 else:
+                    print("Update only mu") 
                     # Update only mu
-                    new_mu = np.random.randn(instance.n)
+                    new_mu = alpha * np.random.randn(instance.n) + (1 - alpha) * current_mu
                     instance.update_parameters(new_mu)
+
                     # Update solver
                     m.update(q=instance.qp_problem['q'])
 
