@@ -45,19 +45,20 @@ class ControlExample(object):
         self.R = .1 * spa.eye(self.nu)
         ind07 = np.random.rand(self.nx) < 0.7   # Random 30% data
         # Choose only 70% of nonzero elements
-        diagQ = np.multiply(10 * np.random.rand(self.nx), ind07)
+        diagQ = np.multiply(np.random.rand(self.nx), ind07)
         self.Q = spa.diags(diagQ)
         QN = sla.solve_discrete_are(self.A.todense(), self.B.todense(),
                                     self.Q.todense(), self.R.todense())
-        self.QN = spa.csc_matrix((QN + QN.T) / 2)
+        self.QN = spa.csc_matrix(QN.dot(QN.T))
+
         # self.QN = spa.csc_matrix(QN.dot(QN))  # Ensure symmetric PSD
         # self.QN = 10 * self.Q
 
         # Input ad state bounds
-        self.umin = - .1 * np.random.rand(self.nu)
-        self.umax = .1 * np.random.rand(self.nu)
+        self.umin = - 1.0 * np.random.rand(self.nu)
+        self.umax = -self.umin
         self.xmin = -1.0 - np.random.rand(self.nx)
-        self.xmax = 1.0 + np.random.rand(self.nx)
+        self.xmax = -self.xmin
 
         # Initial state (constrain to be within lower and upper bound)
         self.x0 = np.random.rand(self.nx)
