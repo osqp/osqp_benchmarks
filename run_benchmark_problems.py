@@ -54,7 +54,7 @@ problems = [
             'Lasso',
             'SVM',
             'Huber',
-            #  'Control'
+            'Control'
             ]
 
 problem_dimensions = {'Random QP': gen_int_log_space(10, 2000, 20),
@@ -102,4 +102,6 @@ compute_performance_profiles(solvers)
 if 'OSQP' in solvers and 'OSQP_polish' in solvers:
     compute_polish_statistics()
 
+# Old function to constrain execution time. Now handled directly via the
+# solvers interface
 # constrain_execution_time(solvers, problems, problem_dimensions, time_limit)
