@@ -56,7 +56,7 @@ class PortfolioParametric(object):
         '''
         Solve problem without warm start
         '''
-        print("Solving without warm start")
+        #  print("Solving without warm start")
 
         # Solution directory
         no_ws_path = os.path.join('.', 'results', 'parametric_problems',
@@ -83,7 +83,7 @@ class PortfolioParametric(object):
                 r = m.solve()
 
                 # DEBUG
-                print("niter = %d" % r.info.iter)
+                #  print("niter = %d" % r.info.iter)
 
                 solution_dict = {'status': [r.info.status],
                                  'run_time': [r.info.run_time],
@@ -132,7 +132,7 @@ class PortfolioParametric(object):
         '''
         Solve problem with warm start
         '''
-        print("Solving with warm start")
+        #  print("Solving with warm start")
 
         # Solution directory
         ws_path = os.path.join('.', 'results', 'parametric_problems',
@@ -159,7 +159,7 @@ class PortfolioParametric(object):
                 r = m.solve()
 
                 # DEBUG
-                print("niter = %d" % r.info.iter)
+                #  print("niter = %d" % r.info.iter)
 
                 if r.info.status != "Solved":
                     print("OSQP warmstart did not solve the problem")

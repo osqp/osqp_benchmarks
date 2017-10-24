@@ -24,7 +24,7 @@ problems = [
 
 # Problem dimensions
 dimensions = {'Lasso': 50,
-              'MPC': 50,
+              'MPC': 20,
               'Portfolio': 100
               }
 
