@@ -118,6 +118,9 @@ class MPCParametric(object):
         # Check if solution already exists
         n_file_name = os.path.join(ws_path, 'n%i.csv' % self.dimension)
 
+        # Set initial state as x0
+        instance.update_x0(x0)
+        
         if not os.path.isfile(n_file_name):
             # Setup solver
             m = osqp.OSQP()
