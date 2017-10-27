@@ -41,6 +41,8 @@ class ECOSSolver(object):
 
         if 'verbose' in self._settings:
             verbose = self._settings["verbose"]
+        else:
+            verbose = False
 
         try:
             problem.solve(solver=cvxpy.ECOS, verbose=verbose)

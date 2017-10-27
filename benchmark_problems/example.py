@@ -4,13 +4,13 @@ from itertools import repeat
 import pandas as pd
 
 from solvers.solvers import SOLVER_MAP
-from problems.random_qp import RandomQPExample
-from problems.eq_qp import EqQPExample
-from problems.portfolio import PortfolioExample
-from problems.lasso import LassoExample
-from problems.svm import SVMExample
-from problems.huber import HuberExample
-from problems.control import ControlExample
+from problem_classes.random_qp import RandomQPExample
+from problem_classes.eq_qp import EqQPExample
+from problem_classes.portfolio import PortfolioExample
+from problem_classes.lasso import LassoExample
+from problem_classes.svm import SVMExample
+from problem_classes.huber import HuberExample
+from problem_classes.control import ControlExample
 from utils.general import make_sure_path_exists
 
 examples = [RandomQPExample,

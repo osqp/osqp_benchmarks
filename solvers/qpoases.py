@@ -81,7 +81,9 @@ class qpOASESSolver(object):
             else:
                 qpoases_m = qpoases.PyQProblem(n, m)
         else:
-            qpoases_m = qpoases.PyQProblem(n, m)
+            # Suppress output also if we do not specify verbose
+            with stdout_redirected():
+                qpoases_m = qpoases.PyQProblem(n, m)
 
         options = qpoases.PyOptions()
 

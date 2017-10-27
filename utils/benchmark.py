@@ -26,13 +26,13 @@ def get_cumulative_data(solvers, problems):
         df.to_csv(solver_file_name, index=False)
 
 
-def compute_performance_profiles(solvers):
+def compute_performance_profiles(solvers, problems_type):
     t = {}
     status = {}
 
     # Get time and status
     for solver in solvers:
-        path = os.path.join('.', 'results', 'benchmark_problems',
+        path = os.path.join('.', 'results', problems_type,
                             solver, 'results.csv')
         df = pd.read_csv(path)
 
@@ -78,7 +78,7 @@ def compute_performance_profiles(solvers):
     # Store final pandas dataframe
     df_performance_profiles = pd.DataFrame(rho)
     performance_profiles_file = os.path.join('.', 'results',
-                                             'benchmark_problems',
+                                             problems_type,
                                              'performance_profiles.csv')
     df_performance_profiles.to_csv(performance_profiles_file, index=False)
 
@@ -94,14 +94,14 @@ def compute_performance_profiles(solvers):
     # plt.show(block=False)
 
 
-def compute_failure_rates(solvers):
+def compute_failure_rates(solvers, problems_type):
     """
     Compute and show failure rates
     """
     print("")
     print('[Failure rates]')
     for solver in solvers:
-        results_file = os.path.join('.', 'results', 'benchmark_problems',
+        results_file = os.path.join('.', 'results', problems_type,
                                     solver, 'results.csv')
         df = pd.read_csv(results_file)
 
@@ -115,63 +115,62 @@ def compute_failure_rates(solvers):
         print(" - %s = %.4f %%" % (solver, 100 * failure_rate))
 
 
-def compute_polish_statistics():
+def compute_polish_statistics(problems_type):
+    # Path where solver results are stored
+    path_osqp = os.path.join('.', 'results', problems_type,
+                             'OSQP', 'results.csv')
+    path_osqp_polish = os.path.join('.', 'results', problems_type,
+                                    'OSQP_polish', 'results.csv')
 
-        # Path where solver results are stored
-        path_osqp = os.path.join('.', 'results', 'benchmark_problems',
-                                 'OSQP', 'results.csv')
-        path_osqp_polish = os.path.join('.', 'results', 'benchmark_problems',
-                                        'OSQP_polish', 'results.csv')
+    # Load data frames
+    df_osqp = pd.read_csv(path_osqp)
+    df_osqp_polish = pd.read_csv(path_osqp_polish)
 
-        # Load data frames
-        df_osqp = pd.read_csv(path_osqp)
-        df_osqp_polish = pd.read_csv(path_osqp_polish)
+    # Take only problems where osqp has success
+    successful_problems = df_osqp['status'] == statuses.OPTIMAL
+    df_osqp = df_osqp.loc[successful_problems]
+    df_osqp_polish = df_osqp_polish.loc[successful_problems]
+    n_problems = len(df_osqp)
 
-        # Take only problems where osqp has success
-        successful_problems = df_osqp['status'] == statuses.OPTIMAL
-        df_osqp = df_osqp.loc[successful_problems]
-        df_osqp_polish = df_osqp_polish.loc[successful_problems]
-        n_problems = len(df_osqp)
+    # Compute time increase
+    osqp_time = df_osqp['run_time'].values
+    osqp_polish_time = df_osqp_polish['run_time'].values
+    time_increase = np.zeros(n_problems)
 
-        # Compute time increase
-        osqp_time = df_osqp['run_time'].values
-        osqp_polish_time = df_osqp_polish['run_time'].values
-        time_increase = np.zeros(n_problems)
+    for i in range(n_problems):
+        time_increase = osqp_polish_time / osqp_time
 
-        for i in range(n_problems):
-            time_increase = osqp_polish_time / osqp_time
+    polish_successs = np.sum(df_osqp_polish['status_polish'] == 1) \
+        / n_problems
 
-        polish_successs = np.sum(df_osqp_polish['status_polish'] == 1) \
-            / n_problems
-
-        # Print results
-        print("\n[OSQP Polish benchmarks]")
-        print("  - Median time increase:  %.2fx" % np.median(time_increase))
-        print("  - Percentage of success: %.2f %%" % (polish_successs * 100))
+    # Print results
+    print("\n[OSQP Polish benchmarks]")
+    print("  - Median time increase:  %.2fx" % np.median(time_increase))
+    print("  - Percentage of success: %.2f %%" % (polish_successs * 100))
 
 
-def constrain_execution_time(solvers, problems,
-                             problem_dimensions, time_limit):
-    """
-    Change status to solver_error when execution time exceeds time_limit
-    """
-
-    for solver in solvers:
-        for problem in problems:
-            for dim in problem_dimensions[problem]:
-                file_to_read = os.path.join('.', 'results',
-                                            'benchmark_problems',
-                                            solver,
-                                            problem,
-                                            'n%i.csv' % dim)
-                df = pd.read_csv(file_to_read)
-                n_instances = len(df)
-                status_list = []
-                for i in range(n_instances):
-                    if df['run_time'].values[i] > time_limit:
-                        status_list.append(statuses.SOLVER_ERROR)
-                    else:
-                        status_list.append(df['status'].values[i])
-
-                df['status'] = status_list
-                df.to_csv(file_to_read, index=False)
+#  def constrain_execution_time(solvers, problems,
+#                               problem_dimensions, time_limit):
+#      """
+#      Change status to solver_error when execution time exceeds time_limit
+#      """
+#
+#      for solver in solvers:
+#          for problem in problems:
+#              for dim in problem_dimensions[problem]:
+#                  file_to_read = os.path.join('.', 'results',
+#                                              'benchmark_problems',
+#                                              solver,
+#                                              problem,
+#                                              'n%i.csv' % dim)
+#                  df = pd.read_csv(file_to_read)
+#                  n_instances = len(df)
+#                  status_list = []
+#                  for i in range(n_instances):
+#                      if df['run_time'].values[i] > time_limit:
+#                          status_list.append(statuses.SOLVER_ERROR)
+#                      else:
+#                          status_list.append(df['status'].values[i])
+#
+#                  df['status'] = status_list
+#                  df.to_csv(file_to_read, index=False)

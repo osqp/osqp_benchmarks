@@ -19,8 +19,8 @@ from utils.benchmark import get_cumulative_data, \
 
 # Define solvers to benchmark
 solvers = [
-            # s.OSQP,
-            # s.OSQP_polish,
+            s.OSQP,
+            s.OSQP_polish,
             s.GUROBI,
             s.MOSEK,
             s.ECOS,
@@ -93,13 +93,11 @@ for problem in problems:
 get_cumulative_data(solvers, problems)
 
 # Compute failure rates
-compute_failure_rates(solvers)
+compute_failure_rates(solvers, 'benchmark_problems')
 
 # Compute performance profiles
-compute_performance_profiles(solvers)
+compute_performance_profiles(solvers, 'benchmark_problems')
 
 # Compute polish statistics
 if 'OSQP' in solvers and 'OSQP_polish' in solvers:
-    compute_polish_statistics()
-
-# constrain_execution_time(solvers, problems, problem_dimensions, time_limit)
+    compute_polish_statistics('benchmark_problems')
