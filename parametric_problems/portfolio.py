@@ -56,7 +56,7 @@ class PortfolioParametric(object):
         '''
         Solve problem without warm start
         '''
-        print("Solving without warm start")
+        #  print("Solving without warm start")
 
         # Solution directory
         no_ws_path = os.path.join('.', 'results', 'parametric_problems',
@@ -102,7 +102,7 @@ class PortfolioParametric(object):
                 current_D_data = instance.D.data
 
                 if i % self.n_qp_per_update == 0:
-                    print("Update everything: mu, F, D") 
+                    #  print("Update everything: mu, F, D")
                     # Update everything
                     new_mu = alpha * np.random.randn(instance.n) + (1 - alpha) * current_mu
                     new_F = instance.F.copy()
@@ -112,7 +112,7 @@ class PortfolioParametric(object):
                         np.sqrt(instance.k) + (1 - alpha) * current_D_data
                     instance.update_parameters(new_mu, new_F, new_D)
                 else:
-                    print("Update only mu") 
+                    #  print("Update only mu")
                     # Update only mu
                     new_mu = alpha * np.random.randn(instance.n) + (1 - alpha) * current_mu
                     instance.update_parameters(new_mu)
@@ -133,7 +133,7 @@ class PortfolioParametric(object):
         '''
         Solve problem with warm start
         '''
-        print("Solving with warm start")
+        #  print("Solving with warm start")
 
         # Solution directory
         ws_path = os.path.join('.', 'results', 'parametric_problems',
@@ -179,7 +179,7 @@ class PortfolioParametric(object):
                 current_D_data = instance.D.data
 
                 if i % self.n_qp_per_update == 0:
-                    print("Update everything: mu, F, D") 
+                    #  print("Update everything: mu, F, D")
                     # Update everything
                     new_mu = alpha * np.random.randn(instance.n) + (1 - alpha) * current_mu
                     new_F = instance.F.copy()
@@ -193,7 +193,7 @@ class PortfolioParametric(object):
                              Px=instance.qp_problem['P'].data,
                              Ax=instance.qp_problem['A'].data)
                 else:
-                    print("Update only mu") 
+                    #  print("Update only mu")
                     # Update only mu
                     new_mu = alpha * np.random.randn(instance.n) + (1 - alpha) * current_mu
                     instance.update_parameters(new_mu)

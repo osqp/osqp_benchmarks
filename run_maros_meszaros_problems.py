@@ -11,10 +11,12 @@ This code tests the solvers:
 '''
 from maros_meszaros_problems.maros_meszaros_problem import MarosMeszarosRunner
 import solvers.solvers as s
+from utils.general import plot_performance_profiles
 from utils.benchmark import \
     compute_performance_profiles, \
     compute_failure_rates, \
     compute_polish_statistics
+import os
 
 # Define solvers to benchmark
 solvers = [
@@ -57,6 +59,9 @@ maros_meszaros_runner = MarosMeszarosRunner(solvers,
 
 maros_meszaros_runner.solve(parallel=False, cores=10)
 
+statistics_file = os.path.join(".", "results", "maros_meszaros_problems",
+                               "statistics.txt")
+print("Saving statistics to %s" % statistics_file)
 
 # Compute failure rates
 compute_failure_rates(solvers, 'maros_meszaros_problems')
@@ -67,3 +72,7 @@ compute_performance_profiles(solvers, 'maros_meszaros_problems')
 # Compute polish statistics
 if 'OSQP' in solvers and 'OSQP_polish' in solvers:
     compute_polish_statistics('maros_meszaros_problems')
+
+# Plot performance profiles
+plot_performance_profiles('maros_meszaros_problems',
+                          ["OSQP", "GUROBI",  "MOSEK"])

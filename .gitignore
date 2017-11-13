@@ -1,5 +1,9 @@
 # Ignore results folder
-results/
+results/*
+
+# Add certain results
+!results/benchmark_problems/benchmark_problems.png
+!results/maros_meszaros_problems/maros_meszaros_problems.png
 
 # OSX Files
 .DS_Store

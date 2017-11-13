@@ -1,8 +1,8 @@
 # Benchmark examples for the OSQP solver
 
-These are the scripts to compare the OSQP solver to many other QP solvers.
-At the moment the supported solvers are:
+These are the scripts to compare the following Quadratic Program (QP) solvers
 
+-   OSQP
 -   GUROBI
 -   MOSEK
 -   ECOS (through CVXPY)
@@ -11,9 +11,11 @@ At the moment the supported solvers are:
 
 To run these scripts you need `pandas` and `cvxpy` installed.
 
-# Problems
+## Benchmark problems
 The problems are all randomly generated as described in the OSQP paper.
-They include
+They produce a benchmark library of `1400` problems with nonzeros ranging from `100` to `10'000'000`.
+Problem instances include
+
 -   Random QP
 -   Equality constrained QP
 -   Portfolio
@@ -21,14 +23,40 @@ They include
 -   Huber fitting
 -   Constrained optimal control
 
-We generate the problems using the scripts in the `problems/` folder.
+We generate the problems using the scripts in the `problem_classes` folder.
 
-# Scripts
-The script `run_benchmark_problems.py` runs all the examples for the specified dimensions and reports the data of each solver in the folder `results/benchmark_problems/SOLVER_NAME/results.csv`.
+To execute these tests run
+```python
+python run_benchmark_problems.py
+```
 
-The script `run_parametric_problems.py` runs the OSQP solver with and without warm-starting for three parametric examples of
+### Results
+The resulting [performance profiles](https://link.springer.com/article/10.1007/s101070100263) are
+![performance_profiles_benchmark](./results/benchmark_problems/benchmark_problems.png "Benchmark Problems")
+
+
+## Maros Meszaros problems
+These are the 138 hard problems from the hard [Maros Meszaros testset](http://www.cuter.rl.ac.uk/Problems/marmes.shtml) converted from [this repository](https://github.com/YimingYAN/QP-Test-Problems).
+In these benchmarks we compare OSQP with GUROBI and MOSEK.
+
+To execute these tests run
+```python
+python run_maros_meszaros_problems.py
+```
+
+### Results
+The resulting [performance profiles](https://link.springer.com/article/10.1007/s101070100263) are
+![performance_profiles_maros](./results/maros_meszaros_problems/maros_meszaros_problems.png "Maros Meszaros Problems")
+
+## Parametric Problems
+These tests apply onlt to the OSQP solver with and without warm-starting for three parametric examples of
 -   Portfolio
 -   Lasso
 -   Constrained optimal control (MPC)
 
-It prints the result of the speed improvements using warm-starting and factorization caching.
+The problem construction is the same as for the same categories in the **Benchmark Problems**.
+
+To execute these tests run
+```python
+python run_parametric_problems.py
+```

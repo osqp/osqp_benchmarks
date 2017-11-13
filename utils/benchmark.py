@@ -98,8 +98,15 @@ def compute_failure_rates(solvers, problems_type):
     """
     Compute and show failure rates
     """
-    print("")
-    print('[Failure rates]')
+
+    # Check if results file already exists
+    results_file = os.path.join(".", "results", problems_type,
+                                "statistics.txt")
+
+    # Always overwrite file
+    f = open(results_file, "w")
+
+    f.write('[Failure rates]\n')
     for solver in solvers:
         results_file = os.path.join('.', 'results', problems_type,
                                     solver, 'results.csv')
@@ -112,10 +119,21 @@ def compute_failure_rates(solvers, problems_type):
         n_failed_problems = np.sum(failed_statuses)
         failure_rate = n_failed_problems / n_problems
 
-        print(" - %s = %.4f %%" % (solver, 100 * failure_rate))
+        f.write(" - %s = %.4f %%\n" % (solver, 100 * failure_rate))
+    f.write("\n")
+
+    f.close()
 
 
 def compute_polish_statistics(problems_type):
+    # Check if results file already exists
+    results_file = os.path.join(".", "results", problems_type,
+                                "statistics.txt")
+    if os.path.exists(results_file):
+        f = open(results_file, "a")
+    else:
+        f = open(results_file, "w")
+
     # Path where solver results are stored
     path_osqp = os.path.join('.', 'results', problems_type,
                              'OSQP', 'results.csv')
@@ -144,9 +162,11 @@ def compute_polish_statistics(problems_type):
         / n_problems
 
     # Print results
-    print("\n[OSQP Polish benchmarks]")
-    print("  - Median time increase:  %.2fx" % np.median(time_increase))
-    print("  - Percentage of success: %.2f %%" % (polish_successs * 100))
+    f.write("\n[OSQP Polish benchmarks]\n")
+    f.write("  - Median time increase:  %.2fx\n" % np.median(time_increase))
+    f.write("  - Percentage of success: %.2f %%\n" % (polish_successs * 100))
+    f.write("\n")
+    f.close()
 
 
 #  def constrain_execution_time(solvers, problems,

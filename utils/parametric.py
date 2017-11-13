@@ -21,21 +21,28 @@ def print_results_parametric(problem, dimension):
     no_ws_df = pd.read_csv(no_ws_file)
     ws_df = pd.read_csv(ws_file)
 
-    print('  OSQP (no warm start): ')
-    print('   - median time: %.4e sec' % no_ws_df['run_time'].median())
-    print('   - mean time:   %.4e sec' % no_ws_df['run_time'].mean())
-    print('   - median iter: %d' % no_ws_df['iter'].median())
-    print('   - mean iter:   %d' % no_ws_df['iter'].mean())
+    # Store results
+    results_file = os.path.join(".", "results", "parametric_problems",
+                                "%s_results.txt" % problem.lower())
+    print("Saving statistics to file %s" % results_file)
+    f = open(results_file, "w")
+    f.write('  OSQP (no warm start): \n')
+    f.write('   - median time: %.4e sec\n' % no_ws_df['run_time'].median())
+    f.write('   - mean time:   %.4e sec\n' % no_ws_df['run_time'].mean())
+    f.write('   - median iter: %d\n' % no_ws_df['iter'].median())
+    f.write('   - mean iter:   %d\n' % no_ws_df['iter'].mean())
 
-    print('  OSQP (warm start): ')
-    print('   - median time: %.4e sec' % ws_df['run_time'].median())
-    print('   - mean time:   %.4e sec' % ws_df['run_time'].mean())
-    print('   - median iter: %d' % ws_df['iter'].median())
-    print('   - mean iter:   %d' % ws_df['iter'].mean())
+    f.write('  OSQP (warm start): \n')
+    f.write('   - median time: %.4e sec\n' % ws_df['run_time'].median())
+    f.write('   - mean time:   %.4e sec\n' % ws_df['run_time'].mean())
+    f.write('   - median iter: %d\n' % ws_df['iter'].median())
+    f.write('   - mean iter:   %d\n' % ws_df['iter'].mean())
 
-    print("  Speedups")
-    print('   - median time: %.2f x' %
-          (no_ws_df['run_time'].median() / ws_df['run_time'].median()))
-    print('   - mean time:   %.2f x' %
-          (no_ws_df['run_time'].mean() / ws_df['run_time'].mean()))
+    f.write("  Speedups\n")
+    f.write('   - median time: %.2f x\n' %
+            (no_ws_df['run_time'].median() / ws_df['run_time'].median()))
+    f.write('   - mean time:   %.2f x\n' %
+            (no_ws_df['run_time'].mean() / ws_df['run_time'].mean()))
+    f.close()
+
     print("")
