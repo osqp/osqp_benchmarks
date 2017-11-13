@@ -5,7 +5,7 @@ import os
 import numpy as np
 from utils.general import make_sure_path_exists
 import pandas as pd
-from problems.portfolio import PortfolioExample
+from problem_classes.portfolio import PortfolioExample
 # import osqppurepy as osqp
 import osqp
 
@@ -83,15 +83,16 @@ class PortfolioParametric(object):
                 r = m.solve()
 
                 # DEBUG
-                print("niter = %d" % r.info.iter)
+                #  print("niter = %d" % r.info.iter)
 
                 solution_dict = {'status': [r.info.status],
                                  'run_time': [r.info.run_time],
                                  'iter': [r.info.iter],
                                  'obj_val': [r.info.obj_val]}
 
-                if r.info.status != "Solved":
+                if r.info.status != "solved":
                     print("OSQP no warmstart did not solve the problem")
+                    import ipdb; ipdb.set_trace()
 
                 res_list_no_ws.append(pd.DataFrame(solution_dict))
 
@@ -159,9 +160,9 @@ class PortfolioParametric(object):
                 r = m.solve()
 
                 # DEBUG
-                print("niter = %d" % r.info.iter)
+                #  print("niter = %d" % r.info.iter)
 
-                if r.info.status != "Solved":
+                if r.info.status != "solved":
                     print("OSQP warmstart did not solve the problem")
 
                 # Get results

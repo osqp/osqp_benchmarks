@@ -4,7 +4,7 @@ Solve Lasso problem as parametric QP by updating iteratively lambda
 import numpy as np
 import pandas as pd
 import os
-from problems.lasso import LassoExample
+from problem_classes.lasso import LassoExample
 from utils.general import make_sure_path_exists
 # import osqppurepy as osqp
 import osqp
@@ -79,7 +79,7 @@ class LassoParametric(object):
                 # DEBUG
                 #  print("Lambda = %.4e,\t niter = %d" % (lambda_val, r.info.iter))
 
-                if r.info.status != "Solved":
+                if r.info.status != "solved":
                     print("OSQP no warmstart did not solve the problem")
 
                 solution_dict = {'status': [r.info.status],
@@ -135,7 +135,7 @@ class LassoParametric(object):
                 # DEBUG
                 #  print("Lambda = %.4e,\t niter = %d" % (lambda_val, r.info.iter))
 
-                if r.info.status != "Solved":
+                if r.info.status != "solved":
                     print("OSQP warmstart did not solve the problem")
 
                 # Get results

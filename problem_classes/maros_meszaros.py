@@ -8,9 +8,11 @@ class MarosMeszaros(object):
     '''
     Maros Meszaros
     '''
-    def __init__(self, file_name):
+    def __init__(self, file_name, create_cvxpy_problem=False):
         '''
         Generate Maros problem in QP format and CVXPY format
+
+        NB. By default, the CVXPY problem is not created
         '''
         # Load problem from file
         self.P, self.q, self.A, self.l, self.u = \
@@ -20,7 +22,9 @@ class MarosMeszaros(object):
         self.m = self.A.shape[0]   # Number of constraints 
         
         self.qp_problem = self._generate_qp_problem()
-        self.cvxpy_problem = self._generate_cvxpy_problem()
+
+        if create_cvxpy_problem:
+            self.cvxpy_problem = self._generate_cvxpy_problem()
 
     @staticmethod
     def _load_maros_meszaros_problem(f):

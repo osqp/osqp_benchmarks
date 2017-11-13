@@ -4,7 +4,7 @@ Solve Lasso problem as parametric QP by updating iteratively lambda
 import numpy as np
 import pandas as pd
 import os
-from problems.control import ControlExample
+from problem_classes.control import ControlExample
 from utils.general import make_sure_path_exists
 # import osqppurepy as osqp
 import osqp
@@ -74,7 +74,7 @@ class MPCParametric(object):
                                  'run_time': [r.info.run_time],
                                  'iter': [r.info.iter]}
 
-                if r.info.status != "Solved":
+                if r.info.status != "solved":
                     print("OSQP no warmstart did not solve the problem")
 
                 res_list_no_ws.append(pd.DataFrame(solution_dict))
@@ -138,7 +138,7 @@ class MPCParametric(object):
                 # Solve problem
                 r = m.solve()
 
-                if r.info.status != "Solved":
+                if r.info.status != "solved":
                     print("OSQP no warmstart did not solve the problem")
 
                 # Get results
