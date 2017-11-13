@@ -5,8 +5,6 @@ This code tests the solvers:
     - OSQP
     - GUROBI
     - MOSEK
-    - ECOS
-    - qpOASES
 
 '''
 from maros_meszaros_problems.maros_meszaros_problem import MarosMeszarosRunner
