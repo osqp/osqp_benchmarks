@@ -48,8 +48,8 @@ python run_maros_meszaros_problems.py
 The resulting [performance profiles](https://link.springer.com/article/10.1007/s101070100263) are
 ![performance_profiles_maros](./results/maros_meszaros_problems/maros_meszaros_problems.png "Maros Meszaros Problems")
 
-## Parametric Problems
-These tests apply onlt to the OSQP solver with and without warm-starting for three parametric examples of
+## Parametric problems
+These tests apply only to the OSQP solver with and without warm-starting for three parametric examples of
 -   Portfolio
 -   Lasso
 -   Constrained optimal control (MPC)
