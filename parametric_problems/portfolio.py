@@ -5,7 +5,7 @@ import os
 import numpy as np
 from utils.general import make_sure_path_exists
 import pandas as pd
-from problems.portfolio import PortfolioExample
+from problem_classes.portfolio import PortfolioExample
 # import osqppurepy as osqp
 import osqp
 
@@ -90,8 +90,9 @@ class PortfolioParametric(object):
                                  'iter': [r.info.iter],
                                  'obj_val': [r.info.obj_val]}
 
-                if r.info.status != "Solved":
+                if r.info.status != "solved":
                     print("OSQP no warmstart did not solve the problem")
+                    import ipdb; ipdb.set_trace()
 
                 res_list_no_ws.append(pd.DataFrame(solution_dict))
 
@@ -101,7 +102,7 @@ class PortfolioParametric(object):
                 current_D_data = instance.D.data
 
                 if i % self.n_qp_per_update == 0:
-                    print("Update everything: mu, F, D") 
+                    #  print("Update everything: mu, F, D")
                     # Update everything
                     new_mu = alpha * np.random.randn(instance.n) + (1 - alpha) * current_mu
                     new_F = instance.F.copy()
@@ -111,7 +112,7 @@ class PortfolioParametric(object):
                         np.sqrt(instance.k) + (1 - alpha) * current_D_data
                     instance.update_parameters(new_mu, new_F, new_D)
                 else:
-                    print("Update only mu") 
+                    #  print("Update only mu")
                     # Update only mu
                     new_mu = alpha * np.random.randn(instance.n) + (1 - alpha) * current_mu
                     instance.update_parameters(new_mu)
@@ -161,7 +162,7 @@ class PortfolioParametric(object):
                 # DEBUG
                 #  print("niter = %d" % r.info.iter)
 
-                if r.info.status != "Solved":
+                if r.info.status != "solved":
                     print("OSQP warmstart did not solve the problem")
 
                 # Get results
@@ -178,7 +179,7 @@ class PortfolioParametric(object):
                 current_D_data = instance.D.data
 
                 if i % self.n_qp_per_update == 0:
-                    print("Update everything: mu, F, D") 
+                    #  print("Update everything: mu, F, D")
                     # Update everything
                     new_mu = alpha * np.random.randn(instance.n) + (1 - alpha) * current_mu
                     new_F = instance.F.copy()
@@ -192,7 +193,7 @@ class PortfolioParametric(object):
                              Px=instance.qp_problem['P'].data,
                              Ax=instance.qp_problem['A'].data)
                 else:
-                    print("Update only mu") 
+                    #  print("Update only mu")
                     # Update only mu
                     new_mu = alpha * np.random.randn(instance.n) + (1 - alpha) * current_mu
                     instance.update_parameters(new_mu)

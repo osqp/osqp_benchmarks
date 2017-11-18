@@ -107,6 +107,10 @@ class GUROBISolver(object):
         if 'verbose' in self._settings:  # if verbose is null, suppress it
             if self._settings['verbose'] == 0:
                 model.setParam("OutputFlag", 0)
+        else:
+                # If verbose not specified, suppress it as well
+                model.setParam("OutputFlag", 0)
+
         for param, value in self._settings.items():  # Set other parameters
             if (param != "verbose") and (param != "time_limit"):
                 model.setParam(param, value)

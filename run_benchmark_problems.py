@@ -11,11 +11,12 @@ This code tests the solvers:
 '''
 from benchmark_problems.example import Example
 import solvers.solvers as s
-from utils.general import gen_int_log_space
+from utils.general import gen_int_log_space, plot_performance_profiles
 from utils.benchmark import get_cumulative_data, \
     compute_performance_profiles, \
     compute_failure_rates, \
     compute_polish_statistics
+import os
 
 # Define solvers to benchmark
 solvers = [
@@ -92,16 +93,21 @@ for problem in problems:
 # Collect cumulative data for each solver
 get_cumulative_data(solvers, problems)
 
+statistics_file = os.path.join(".", "results", "benchmark_problems",
+                               "statistics.txt")
+print("Saving statistics to %s" % statistics_file)
+
 # Compute failure rates
-compute_failure_rates(solvers)
+compute_failure_rates(solvers, 'benchmark_problems')
 
 # Compute performance profiles
-compute_performance_profiles(solvers)
+compute_performance_profiles(solvers, 'benchmark_problems')
 
 # Compute polish statistics
 if 'OSQP' in solvers and 'OSQP_polish' in solvers:
-    compute_polish_statistics()
+    compute_polish_statistics('benchmark_problems')
 
-# Old function to constrain execution time. Now handled directly via the
-# solvers interface
-# constrain_execution_time(solvers, problems, problem_dimensions, time_limit)
+
+# Plot performance profiles
+plot_performance_profiles('benchmark_problems',
+                          ["OSQP", "GUROBI", "ECOS", "MOSEK", "qpOASES"])
