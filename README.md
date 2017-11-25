@@ -8,7 +8,7 @@ These are the scripts to compare the following Quadratic Program (QP) solvers
 -   ECOS (through CVXPY)
 -   qpOASES
 
-
+The detailed description of these tests is available in [this paper](https://arxiv.org/pdf/1711.08013.pdf).
 To run these scripts you need `pandas` and `cvxpy` installed.
 
 ## Benchmark problems

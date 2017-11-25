@@ -145,6 +145,8 @@ def plot_performance_profiles(problems, solvers):
         plt.plot(df["tau"], df[solver], label=solver)
     plt.xlim(1., 10000.)
     plt.ylim(0., 1.)
+    plt.xlabel(r'Performance ratio $\tau$')
+    plt.ylabel('Ratio of problems solved')
     plt.xscale('log')
     plt.legend()
     plt.grid()
