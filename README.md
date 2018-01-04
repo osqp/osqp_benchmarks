@@ -36,7 +36,7 @@ The resulting [performance profiles](https://link.springer.com/article/10.1007/s
 
 
 ## Maros Meszaros problems
-These are the 138 hard problems from the hard [Maros Meszaros testset](http://www.cuter.rl.ac.uk/Problems/marmes.shtml) converted from [this repository](https://github.com/YimingYAN/QP-Test-Problems).
+These are the 138 hard problems from the hard [Maros Meszaros testset](http://www.cuter.rl.ac.uk/Problems/marmes.shtml) converted using [CUTEst](https://ccpforge.cse.rl.ac.uk/gf/project/cutest/wiki) and the scripts in the [sif/](./problem_classes/maros_meszaros_data/sif) folder.
 In these benchmarks we compare OSQP with GUROBI and MOSEK.
 
 To execute these tests run
