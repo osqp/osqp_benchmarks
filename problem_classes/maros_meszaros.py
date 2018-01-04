@@ -15,12 +15,9 @@ class MarosMeszaros(object):
         NB. By default, the CVXPY problem is not created
         '''
         # Load problem from file
-        self.P, self.q, self.A, self.l, self.u = \
+        self.P, self.q, self.r, self.A, self.l, self.u, self.n, self.m = \
             self._load_maros_meszaros_problem(file_name)
 
-        self.n = self.A.shape[1]   # Number of variables
-        self.m = self.A.shape[0]   # Number of constraints 
-        
         self.qp_problem = self._generate_qp_problem()
 
         if create_cvxpy_problem:
@@ -32,17 +29,16 @@ class MarosMeszaros(object):
         m = spio.loadmat(f)
 
         # Convert matrices
-        P = m['Q'].astype(float).tocsc()
-        n = P.shape[0]
-        q = m['c'].T.flatten().astype(float)
-        A = m['A'].astype(float)
-        A = spa.vstack([A, spa.eye(n)]).tocsc()
-        u = np.append(m['ru'].T.flatten().astype(float),
-                      m['ub'].T.flatten().astype(float))
-        l = np.append(m['rl'].T.flatten().astype(float),
-                      m['lb'].T.flatten().astype(float))
+        P = m['P'].astype(float).tocsc()
+        q = m['q'].T.flatten().astype(float)
+        r = m['r'].T.flatten().astype(float)[0]
+        A = m['A'].astype(float).tocsc()
+        l = m['l'].T.flatten().astype(float)
+        u = m['u'].T.flatten().astype(float)
+        n = m['n'].T.flatten().astype(int)[0]
+        m = m['m'].T.flatten().astype(int)[0]
 
-        return P, q, A, l, u
+        return P, q, r, A, l, u, n, m
 
     @staticmethod
     def name():
@@ -55,11 +51,12 @@ class MarosMeszaros(object):
         problem = {}
         problem['P'] = self.P
         problem['q'] = self.q
+        problem['r'] = self.r
         problem['A'] = self.A
         problem['l'] = self.l
         problem['u'] = self.u
-        problem['m'] = self.m
         problem['n'] = self.n
+        problem['m'] = self.m
 
         return problem
 
@@ -68,7 +65,8 @@ class MarosMeszaros(object):
         Generate QP problem
         '''
         x_var = cvxpy.Variable(self.n)
-        objective = .5 * cvxpy.quad_form(x_var, self.P) + self.q * x_var
+        objective = .5 * cvxpy.quad_form(x_var, self.P) + self.q * x_var + \
+            self.r
         constraints = [self.A * x_var <= self.u, self.A * x_var >= self.l]
         problem = cvxpy.Problem(cvxpy.Minimize(objective), constraints)
 

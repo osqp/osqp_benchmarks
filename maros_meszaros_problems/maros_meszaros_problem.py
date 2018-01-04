@@ -6,7 +6,9 @@ import pandas as pd
 from solvers.solvers import SOLVER_MAP
 from problem_classes.maros_meszaros import MarosMeszaros
 from utils.general import make_sure_path_exists
+from utils.maros_meszaros import OPT_COST_MAP
 
+import numpy as np
 
 PROBLEMS_FOLDER = "maros_meszaros_data"
 
@@ -23,7 +25,9 @@ class MarosMeszarosRunner(object):
 
         # Get maros problems list
         problems_dir = os.path.join(".", "problem_classes", PROBLEMS_FOLDER)
-        lst_probs = os.listdir(problems_dir)  # List of problems
+        # List of problems in .mat format
+        lst_probs = [f for f in os.listdir(problems_dir) if \
+            f.endswith('.mat')] 
         self.problems = [f[:-4] for f in lst_probs]   # List of problem names
 
     def solve(self, parallel=True, cores=32):
@@ -127,12 +131,32 @@ class MarosMeszarosRunner(object):
         P = instance.qp_problem['P']
         A = instance.qp_problem['A']
         N = P.nnz + A.nnz
+
+        # Add constant part to objective value
+        # NB. This is needed to match the objective in the original 
+        # Maros Meszaros paper
+        obj = results.obj_val
+        if results.obj_val is not None:
+            obj += instance.qp_problem["r"]         
+        
+        # Optimal cost distance from Maros Meszaros results
+        # ( obj - opt_obj )/(|opt_obj|)
+        if obj is not None:
+            obj_dist = abs(obj - OPT_COST_MAP[problem]) 
+            if abs(OPT_COST_MAP[problem]) > 1e-20:
+                # Normalize cost distance
+                obj_dist /= abs(OPT_COST_MAP[problem]) 
+        else:
+            obj_dist = np.inf
+
         solution_dict = {'name': [problem],
                          'solver': [solver],
                          'status': [results.status],
                          'run_time': [results.run_time],
                          'iter': [results.niter],
-                         'obj_val': [results.obj_val],
+                         'obj_val': [obj],
+                         'obj_opt': [OPT_COST_MAP[problem]],
+                         'obj_dist': [obj_dist],
                          'n': [instance.qp_problem["n"]],
                          'm': [instance.qp_problem["m"]],
                          'N': [N]}

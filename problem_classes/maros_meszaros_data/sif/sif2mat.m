@@ -44,9 +44,6 @@ cu = problem.cu;
 cons_shift = A_c * x0 - cx0;
 cl = cl + cons_shift;
 cu = cu + cons_shift;
-
-% cl(problem.equatn) = eq_cons_shift; % Convert equality constraints bounds to 0
-% cu(problem.equatn) = eq_cons_shift; % Convert equality constraints bounds to 0
 l = [cl; problem.bl];
 u = [cu; problem.bu];
 
@@ -54,7 +51,7 @@ u = [cu; problem.bu];
 A = [sparse(A_c); speye(n)];
 
 % Store data to mat file
-save(sprintf('../%s', probname),'m', 'n', 'P','q','A','l','u');
+save(sprintf('../%s', probname),'m', 'n', 'P','q','r','A','l','u');
 
 % Solve with gurobi (debug)
 % x = sdpvar(n,1);
