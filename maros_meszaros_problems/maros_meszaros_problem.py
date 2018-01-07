@@ -44,7 +44,8 @@ class MarosMeszarosRunner(object):
             - 'status': solver status
             - 'run_time': execution time
             - 'iter': number of iterations
-            - 'obj_val': objective value
+            - 'obj_val': objective value from solver
+            - 'obj_opt': optimal objective value
             - 'n': leading dimension
             - 'N': nnz dimension (nnz(P) + nnz(A))
         '''
@@ -140,14 +141,15 @@ class MarosMeszarosRunner(object):
             obj += instance.qp_problem["r"]         
         
         # Optimal cost distance from Maros Meszaros results
+        # (For DEBUG)
         # ( obj - opt_obj )/(|opt_obj|)
-        if obj is not None:
-            obj_dist = abs(obj - OPT_COST_MAP[problem]) 
-            if abs(OPT_COST_MAP[problem]) > 1e-20:
-                # Normalize cost distance
-                obj_dist /= abs(OPT_COST_MAP[problem]) 
-        else:
-            obj_dist = np.inf
+        #  if obj is not None:
+        #      obj_dist = abs(obj - OPT_COST_MAP[problem])
+        #      if abs(OPT_COST_MAP[problem]) > 1e-20:
+        #          # Normalize cost distance
+        #          obj_dist /= abs(OPT_COST_MAP[problem])
+        #  else:
+        #      obj_dist = np.inf
 
         solution_dict = {'name': [problem],
                          'solver': [solver],
@@ -156,7 +158,7 @@ class MarosMeszarosRunner(object):
                          'iter': [results.niter],
                          'obj_val': [obj],
                          'obj_opt': [OPT_COST_MAP[problem]],
-                         'obj_dist': [obj_dist],
+                         #  'obj_dist': [obj_dist],
                          'n': [instance.qp_problem["n"]],
                          'm': [instance.qp_problem["m"]],
                          'N': [N]}
