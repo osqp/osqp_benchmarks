@@ -25,6 +25,6 @@ To generate the .mat files you need the following steps
     extract_sif.m
     ```
 
-The .mat files should appear in the `maros_meszaros_data/` folder. This repository already includes the converted files so that the scripts are easier do download and execute.
+The .mat files should appear in the `maros_meszaros_data/` folder. This repository already includes the converted files so that the scripts are easier to download and execute.
 
 
