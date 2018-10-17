@@ -60,3 +60,7 @@ To execute these tests run
 ```python
 python run_parametric_problems.py
 ```
+
+## Citing
+
+If you are using these benchmarks for your work, please cite the [OSQP paper](https://osqp.org/citing/).
