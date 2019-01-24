@@ -125,15 +125,15 @@ class HuberExample(object):
         constraints = self.cvxpy_problem.constraints
 
         # primal solution
-        x = np.concatenate((x_cvx.value.A1,
-                            u_cvx.value.A1,
-                            v_cvx.value.A1))
+        x = np.concatenate((x_cvx.value,
+                            u_cvx.value,
+                            v_cvx.value))
 
         # dual solution
-        y = np.concatenate((-constraints[0].dual_value.A1,
-                            constraints[1].dual_value.A1,
-                            constraints[3].dual_value.A1 -
-                            constraints[2].dual_value.A1,
-                            -constraints[4].dual_value.A1))
+        y = np.concatenate((-constraints[0].dual_value,
+                            constraints[1].dual_value,
+                            constraints[3].dual_value -
+                            constraints[2].dual_value,
+                            -constraints[4].dual_value))
 
         return x, y

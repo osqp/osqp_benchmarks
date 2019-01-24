@@ -72,9 +72,9 @@ class EqQPExample(object):
         constraints = self.cvxpy_problem.constraints
 
         # primal solution
-        x = variables[0].value.A1
+        x = variables[0].value
 
         # dual solution
-        y = constraints[0].dual_value.A1
+        y = constraints[0].dual_value
 
         return x, y

@@ -120,14 +120,14 @@ class PortfolioExample(object):
         constraints = self.cvxpy_problem.constraints
 
         # primal solution
-        x = np.concatenate((variables[0].value.A1,
-                            variables[1].value.A1))
+        x = np.concatenate((variables[0].value,
+                            variables[1].value))
 
         # dual solution
         y = np.concatenate(([constraints[0].dual_value],
-                            constraints[1].dual_value.A1,
-                            constraints[3].dual_value.A1 -
-                            constraints[2].dual_value.A1))
+                            constraints[1].dual_value,
+                            constraints[3].dual_value -
+                            constraints[2].dual_value))
 
         return x, y
 
