@@ -45,7 +45,7 @@ class ECOSSolver(object):
             verbose = False
 
         try:
-            problem.solve(solver=cvxpy.ECOS, verbose=verbose)
+            obj_val = problem.solve(solver=cvxpy.ECOS, verbose=verbose)
         except cvxpy.SolverError:
             if 'verbose' in self._settings:  # if verbose is null, suppress it
                 if self._settings['verbose']:
@@ -60,8 +60,6 @@ class ECOSSolver(object):
             + problem.solver_stats.setup_time
 
         niter = problem.solver_stats.num_iters
-
-        obj_val = problem.objective.value
 
         # Get primal, dual solution
         x, y = example.revert_cvxpy_solution()
