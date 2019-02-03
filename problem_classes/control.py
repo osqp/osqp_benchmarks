@@ -209,11 +209,11 @@ class ControlExample(object):
         T = self.T
 
         # primal solution
-        x = np.concatenate((x_cvx.value.T.A1,
-                            u_cvx.value.T.A1))
+        x = np.concatenate((x_cvx.value.T,
+                            u_cvx.value.T))
 
         # dual solution
-        constraint_values = [constr.dual_value.A1 for constr in constraints]
+        constraint_values = [constr.dual_value for constr in constraints]
         y = np.array([])
 
         # Add dynamics

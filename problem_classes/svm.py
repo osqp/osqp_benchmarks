@@ -115,11 +115,11 @@ class SVMExample(object):
         constraints = self.cvxpy_problem.constraints
 
         # primal solution
-        x = np.concatenate((x_cvx.value.A1,
-                            t_cvx.value.A1))
+        x = np.concatenate((x_cvx.value,
+                            t_cvx.value))
 
         # dual solution
-        y = np.concatenate((constraints[0].dual_value.A1,
-                            -constraints[1].dual_value.A1))
+        y = np.concatenate((constraints[0].dual_value,
+                            -constraints[1].dual_value))
 
         return x, y
