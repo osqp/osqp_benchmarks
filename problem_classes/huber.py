@@ -38,43 +38,16 @@ class HuberExample(object):
         Generate QP problem
         '''
         # Construct the problem
-        #       minimize	1/2 u.T * u + np.ones(m).T * v
-        #       subject to  -u - v <= Ax - b <= u + v
-        #                   0 <= u <= 1
-        #                   v >= 0
+        #       minimize    1/2 u.T * u + np.ones(m).T * v
+        #       subject to  -v <= Ax - b - u <= v
         Im = spa.eye(self.m)
         P = spa.block_diag((spa.csc_matrix((self.n, self.n)), Im,
                             spa.csc_matrix((self.m, self.m))), format='csc')
         q = np.append(np.zeros(self.m + self.n), np.ones(self.m))
-        A = spa.vstack([
-                spa.hstack([self.Ad, Im, Im]),
-                spa.hstack([self.Ad, -Im, -Im]),
-                spa.hstack([spa.csc_matrix((2 * self.m, self.n)),
-                            spa.eye(2 * self.m)])
-                ]).tocsc()
-        l = np.hstack([self.bd,
-                       -np.inf*np.ones(self.m),
-                       np.zeros(2 * self.m)])
-        u = np.hstack([np.inf*np.ones(self.m),
-                       self.bd,
-                       np.ones(self.m),
-                       np.inf*np.ones(self.m)])
-
-        # Constraints without bounds
-        A_nobounds = spa.vstack([
-                spa.hstack([self.Ad, Im, Im]),
-                spa.hstack([self.Ad, -Im, -Im])
-                ]).tocsc()
-        l_nobounds = np.hstack([self.bd, -np.inf*np.ones(self.m)])
-        u_nobounds = np.hstack([np.inf*np.ones(self.m), self.bd])
-
-        # Bounds
-        lx = np.hstack([-np.inf * np.ones(self.n),
-                        np.zeros(2 * self.m)])
-        ux = np.hstack([np.inf * np.ones(self.n),
-                        np.ones(self.m),
-                        np.inf*np.ones(self.m)])
-        bounds_idx = np.arange(self.n, self.n + 2 * self.m)
+        A = spa.bmat([[self.Ad, -Im, Im],
+                      [self.Ad, -Im, -Im]], format='csc')
+        l = np.hstack([self.bd, -np.inf*np.ones(self.m)])
+        u = np.hstack([np.inf*np.ones(self.m), self.bd])
 
         problem = {}
         problem['P'] = P
@@ -84,12 +57,6 @@ class HuberExample(object):
         problem['u'] = u
         problem['m'] = A.shape[0]
         problem['n'] = A.shape[1]
-        problem['A_nobounds'] = A_nobounds
-        problem['l_nobounds'] = l_nobounds
-        problem['u_nobounds'] = u_nobounds
-        problem['bounds_idx'] = bounds_idx
-        problem['lx'] = lx
-        problem['ux'] = ux
 
         return problem
 
