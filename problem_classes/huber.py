@@ -38,16 +38,30 @@ class HuberExample(object):
         Generate QP problem
         '''
         # Construct the problem
-        #       minimize    1/2 u.T * u + np.ones(m).T * v
-        #       subject to  -v <= Ax - b - u <= v
+        #       minimize    1/2 z.T * z + np.ones(m).T * (r + s)
+        #       subject to  Ax - b - z = r - s
+        #                   r >= 0
+        #                   s >= 0
         Im = spa.eye(self.m)
         P = spa.block_diag((spa.csc_matrix((self.n, self.n)), Im,
-                            spa.csc_matrix((self.m, self.m))), format='csc')
-        q = np.append(np.zeros(self.m + self.n), np.ones(self.m))
-        A = spa.bmat([[self.Ad, -Im, Im],
-                      [self.Ad, -Im, -Im]], format='csc')
-        l = np.hstack([self.bd, -np.inf*np.ones(self.m)])
-        u = np.hstack([np.inf*np.ones(self.m), self.bd])
+                            spa.csc_matrix((2*self.m, 2*self.m))), format='csc')
+        q = np.hstack([np.zeros(self.n + self.m), np.ones(2*self.m)])
+        A = spa.bmat([[self.Ad, -Im,   -Im,   Im],
+                      [None,     None,  Im,   None],
+                      [None,     None,  None, Im]], format='csc')
+        l = np.hstack([self.bd, np.zeros(2*self.m)])
+        u = np.hstack([self.bd, np.inf*np.ones(2*self.m)])
+
+        # Constraints without bounds
+        A_nobounds = spa.hstack([self.Ad, -Im, -Im, Im], format='csc')
+        l_nobounds = self.bd
+        u_nobounds = self.bd
+
+        # Bounds
+        lx = np.hstack([-np.inf * np.ones(self.n + self.m),
+                        np.zeros(2*self.m)])
+        ux = np.inf*np.ones(self.n + 3*self.m)
+        bounds_idx = np.arange(self.n + self.m, self.n + 3*self.m)
 
         problem = {}
         problem['P'] = P
@@ -57,6 +71,12 @@ class HuberExample(object):
         problem['u'] = u
         problem['m'] = A.shape[0]
         problem['n'] = A.shape[1]
+        problem['A_nobounds'] = A_nobounds
+        problem['l_nobounds'] = l_nobounds
+        problem['u_nobounds'] = u_nobounds
+        problem['bounds_idx'] = bounds_idx
+        problem['lx'] = lx
+        problem['ux'] = ux
 
         return problem
 
