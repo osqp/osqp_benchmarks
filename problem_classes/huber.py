@@ -42,6 +42,8 @@ class HuberExample(object):
         #       subject to  Ax - b - z = r - s
         #                   r >= 0
         #                   s >= 0
+        # The problem reformulation follows from Eq. (24) of the following paper:
+        # https://doi.org/10.1109/34.877518
         Im = spa.eye(self.m)
         P = spa.block_diag((spa.csc_matrix((self.n, self.n)), Im,
                             spa.csc_matrix((2*self.m, 2*self.m))), format='csc')
