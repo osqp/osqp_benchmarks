@@ -7,10 +7,10 @@ from utils.general import is_qp_solution_optimal
 class OSQPSolver(object):
 
     m = osqp.OSQP()
-    STATUS_MAP = {m.constant('OSQP_SOLVED'): s.OPTIMAL,
-                  m.constant('OSQP_MAX_ITER_REACHED'): s.MAX_ITER_REACHED,
-                  m.constant('OSQP_PRIMAL_INFEASIBLE'): s.PRIMAL_INFEASIBLE,
-                  m.constant('OSQP_DUAL_INFEASIBLE'): s.DUAL_INFEASIBLE}
+    STATUS_MAP = {osqp.constant('OSQP_SOLVED'): s.OPTIMAL,
+                  osqp.constant('OSQP_MAX_ITER_REACHED'): s.MAX_ITER_REACHED,
+                  osqp.constant('OSQP_PRIMAL_INFEASIBLE'): s.PRIMAL_INFEASIBLE,
+                  osqp.constant('OSQP_DUAL_INFEASIBLE'): s.DUAL_INFEASIBLE}
 
     def __init__(self, settings={}):
         '''
@@ -66,5 +66,8 @@ class OSQPSolver(object):
                                  results.info.iter)
 
         return_results.status_polish = results.info.status_polish
+        return_results.setup_time = results.info.setup_time
+        return_results.solve_time = results.info.solve_time
+        return_results.update_time = results.info.update_time
 
         return return_results

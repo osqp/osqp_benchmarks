@@ -93,6 +93,82 @@ def compute_performance_profiles(solvers, problems_type):
     # plt.xscale('log')
     # plt.show(block=False)
 
+def geom_mean(t, shift=10.):
+    return np.power(np.prod(t + shift), 1/len(t)) - shift
+    
+
+def compute_shifted_geometric_means(solvers, problems_type):
+    t = {}
+    status = {}
+    g_mean = {}
+
+    # Get time and status
+    for solver in solvers:
+        path = os.path.join('.', 'results', problems_type,
+                            solver, 'results.csv')
+        df = pd.read_csv(path)
+
+        # Get total number of problems
+        n_problems = len(df)
+
+        t[solver] = df['run_time'].values
+        status[solver] = df['status'].values
+
+        # Set maximum time for solvers that did not succeed
+        for idx in range(n_problems):
+            if status[solver][idx] not in statuses.SOLUTION_PRESENT:
+                t[solver][idx] = MAX_TIMING
+
+        g_mean[solver] = geom_mean(t[solver])
+
+    # Normalize geometric means by best solver
+    best_g_mean = np.min([g_mean[s] for s in solvers])
+    for s in solvers:
+        g_mean[s] /= best_g_mean
+                    
+    # Store final pandas dataframe
+    df_g_mean = pd.Series(g_mean)
+    g_mean_file = os.path.join('.', 'results',
+                               problems_type,
+                               'geom_mean.csv')
+    df_g_mean.to_csv(g_mean_file, header=False, index=True)
+
+
+    # r = {}  # Dictionary of relative times for each solver/problem
+    # for s in solvers:
+    #     r[s] = np.zeros(n_problems)
+
+    # # Iterate over all problems to find best timing between solvers
+    # for p in range(n_problems):
+
+    #     # Get minimum time
+    #     min_time = np.min([t[s][p] for s in solvers])
+
+    #     # Normalize t for minimum time
+    #     for s in solvers:
+    #         r[s][p] = t[s][p]/min_time
+
+    # # Compute curve for all solvers
+    # n_tau = 1000
+    # tau_vec = np.logspace(0, 4, n_tau)
+    # rho = {'tau': tau_vec}  # Dictionary of all the curves
+
+    # for s in solvers:
+    #     rho[s] = np.zeros(n_tau)
+    #     for tau_idx in range(n_tau):
+    #         count_problems = 0  # Count number of problems with t[p, s] <= tau
+    #         for p in range(n_problems):
+    #             if r[s][p] <= tau_vec[tau_idx]:
+    #                 count_problems += 1
+    #         rho[s][tau_idx] = count_problems / n_problems
+
+    # Store final pandas dataframe
+    # df_performance_profiles = pd.DataFrame(rho)
+    # performance_profiles_file = os.path.join('.', 'results',
+    #                                          problems_type,
+    #                                          'performance_profiles.csv')
+    # df_performance_profiles.to_csv(performance_profiles_file, index=False)
+
 
 def compute_failure_rates(solvers, problems_type):
     """

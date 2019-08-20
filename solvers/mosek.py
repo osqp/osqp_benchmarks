@@ -11,13 +11,9 @@ class MOSEKSolver(object):
     # Map of Mosek status to mathprogbasepy status.
     STATUS_MAP = {mosek.solsta.optimal: s.OPTIMAL,
                   mosek.solsta.integer_optimal: s.OPTIMAL,
+                  mosek.solsta.prim_feas: s.OPTIMAL_INACCURATE,    # for integer problems
                   mosek.solsta.prim_infeas_cer: s.PRIMAL_INFEASIBLE,
                   mosek.solsta.dual_infeas_cer: s.DUAL_INFEASIBLE,
-                  mosek.solsta.near_optimal: s.OPTIMAL_INACCURATE,
-                  mosek.solsta.near_prim_infeas_cer:
-                  s.PRIMAL_INFEASIBLE_INACCURATE,
-                  mosek.solsta.near_dual_infeas_cer:
-                  s.DUAL_INFEASIBLE_INACCURATE,
                   mosek.solsta.unknown: s.SOLVER_ERROR}
 
     def __init__(self, settings={}):
@@ -148,14 +144,15 @@ class MOSEKSolver(object):
         '''
 
         # Get solution type and status
-        soltype, solsta = self.choose_solution(task)
+        # soltype, solsta = self.choose_solution(task)
+        solsta = task.getsolsta(mosek.soltype.itr)
+        soltype = mosek.soltype.itr
 
         # Map status using statusmap
         status = self.STATUS_MAP.get(solsta, s.SOLVER_ERROR)
 
         # Get statistics
-        cputime = task.getdouinf(mosek.dinfitem.optimizer_time) + \
-            task.getdouinf(mosek.dinfitem.presolve_time)
+        cputime = task.getdouinf(mosek.dinfitem.optimizer_time)
         total_iter = task.getintinf(mosek.iinfitem.intpnt_iter)
 
         if status in s.SOLUTION_PRESENT:
@@ -184,54 +181,54 @@ class MOSEKSolver(object):
             return Results(status, None, None, None,
                            cputime, None)
 
-    def choose_solution(self, task):
-        """Chooses between the basic, interior point solution or integer solution
-        Parameters
-        N.B. From CVXPY
-        ----------
-        task : mosek.Task
-            The solver status interface.
-        Returns
-        -------
-        soltype
-            The preferred solution (mosek.soltype.*)
-        solsta
-            The status of the preferred solution (mosek.solsta.*)
-        """
-        import mosek
+    # def choose_solution(self, task):
+    #     """Chooses between the basic, interior point solution or integer solution
+    #     Parameters
+    #     N.B. From CVXPY
+    #     ----------
+    #     task : mosek.Task
+    #         The solver status interface.
+    #     Returns
+    #     -------
+    #     soltype
+    #         The preferred solution (mosek.soltype.*)
+    #     solsta
+    #         The status of the preferred solution (mosek.solsta.*)
+    #     """
+    #     import mosek
 
-        def rank(status):
-            # Rank solutions
-            # optimal > near_optimal > anything else > None
-            if status == mosek.solsta.optimal:
-                return 3
-            elif status == mosek.solsta.near_optimal:
-                return 2
-            elif status is not None:
-                return 1
-            else:
-                return 0
+    #     def rank(status):
+    #         # Rank solutions
+    #         # optimal > near_optimal > anything else > None
+    #         if status == mosek.solsta.optimal:
+    #             return 3
+    #         elif status == mosek.solsta.near_optimal:
+    #             return 2
+    #         elif status is not None:
+    #             return 1
+    #         else:
+    #             return 0
 
-        solsta_bas, solsta_itr = None, None
+    #     solsta_bas, solsta_itr = None, None
 
-        # Integer solution
-        if task.solutiondef(mosek.soltype.itg):
-            solsta_itg = task.getsolsta(mosek.soltype.itg)
-            return mosek.soltype.itg, solsta_itg
+    #     # Integer solution
+    #     if task.solutiondef(mosek.soltype.itg):
+    #         solsta_itg = task.getsolsta(mosek.soltype.itg)
+    #         return mosek.soltype.itg, solsta_itg
 
-        # Continuous solution
-        if task.solutiondef(mosek.soltype.bas):
-            solsta_bas = task.getsolsta(mosek.soltype.bas)
+    #     # Continuous solution
+    #     if task.solutiondef(mosek.soltype.bas):
+    #         solsta_bas = task.getsolsta(mosek.soltype.bas)
 
-        if task.solutiondef(mosek.soltype.itr):
-            solsta_itr = task.getsolsta(mosek.soltype.itr)
+    #     if task.solutiondef(mosek.soltype.itr):
+    #         solsta_itr = task.getsolsta(mosek.soltype.itr)
 
-        # As long as interior solution is not worse, take it
-        # (for backward compatibility)
-        if rank(solsta_itr) >= rank(solsta_bas):
-            return mosek.soltype.itr, solsta_itr
-        else:
-            return mosek.soltype.bas, solsta_bas
+    #     # As long as interior solution is not worse, take it
+    #     # (for backward compatibility)
+    #     if rank(solsta_itr) >= rank(solsta_bas):
+    #         return mosek.soltype.itr, solsta_itr
+    #     else:
+    #         return mosek.soltype.bas, solsta_bas
 
     @staticmethod
     def _handle_str_param(task, param, value):

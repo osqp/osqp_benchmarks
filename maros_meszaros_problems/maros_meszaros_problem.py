@@ -166,6 +166,9 @@ class MarosMeszarosRunner(object):
         # Add status polish if OSQP
         if solver[:4] == 'OSQP':
             solution_dict['status_polish'] = results.status_polish
+            solution_dict['setup_time'] = results.setup_time
+            solution_dict['solve_time'] = results.solve_time
+            solution_dict['update_time'] = results.update_time
 
         # Return solution
         return pd.DataFrame(solution_dict)
