@@ -4,7 +4,7 @@ from itertools import repeat
 import pandas as pd
 
 from solvers.solvers import SOLVER_MAP
-from problem_classes.maros_meszaros import MarosMeszaros
+from problem_classes.suitesparse_lasso import SuitesparseLasso
 from utils.general import make_sure_path_exists
 
 import numpy as np
@@ -22,7 +22,7 @@ class SuitesparseLassoRunner(object):
         self.solvers = solvers
         self.settings = settings
 
-        # Get maros problems list
+        # Get problems list
         problems_dir = os.path.join(".", "problem_classes", PROBLEMS_FOLDER)
         # List of problems in .mat format
         lst_probs = [f for f in os.listdir(problems_dir) if \
@@ -38,7 +38,7 @@ class SuitesparseLassoRunner(object):
             ./results/suitesparse_lasso_problems/{solver}/results.csv
 
         using a pandas table with fields
-            - 'name': Maros problem name
+            - 'name': problem name
             - 'solver': solver name
             - 'status': solver status
             - 'run_time': execution time
@@ -74,7 +74,7 @@ class SuitesparseLassoRunner(object):
 
             # Check if file name already exists
             if not os.path.isfile(results_file_name):
-                # Solve Maros Meszaros problems
+                # Solve  problems
                 if parallel:
                     results = pool.starmap(self.solve_single_example,
                                            zip(self.problems,
@@ -119,7 +119,7 @@ class SuitesparseLassoRunner(object):
         # Create example instance
         full_name = os.path.join(".", "problem_classes",
                                  PROBLEMS_FOLDER, problem)
-        instance = MarosMeszaros(full_name)
+        instance = SuitesparseLasso(full_name)
 
         print(" - Solving %s with solver %s" % (problem, solver))
 
@@ -131,13 +131,6 @@ class SuitesparseLassoRunner(object):
         P = instance.qp_problem['P']
         A = instance.qp_problem['A']
         N = P.nnz + A.nnz
-
-        # Add constant part to objective value
-        # NB. This is needed to match the objective in the original 
-        # Maros Meszaros paper
-        obj = results.obj_val
-        if results.obj_val is not None:
-            obj += instance.qp_problem["r"]         
         
         solution_dict = {'name': [problem],
                          'solver': [solver],
