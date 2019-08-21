@@ -74,7 +74,7 @@ maros_meszaros_runner = MarosMeszarosRunner(solvers,
                                             settings)
 
 # DEBUG only: Choose only 2 problems
-# maros_meszaros_runner.problems = ["HS52", "HS53"]
+# maros_meszaros_runner.problems = ["HS52"]
 
 maros_meszaros_runner.solve(parallel=True, cores=12)
 

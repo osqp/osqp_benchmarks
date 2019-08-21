@@ -1,10 +1,15 @@
 using MatrixDepot
+using SparseArrays
+using MAT
+using Random
+rand(0)
+
+accepted_problems = ["least squares problem", "optimization problem"]
 
 # List all problems (Filter some)
 list = mdlist("*/*")
 
 # Get matrix A and vector b for all problems
-problems = []
 prob_count = 0
 md_info = 0
 for problem in list
@@ -13,28 +18,41 @@ for problem in list
     # Check if type is correct
     if split(md_kind)[1] == "kind:"  # Got the right kind
         kind = join(split(md_kind)[2:end], " ")
-        if kind == "least squares problem"
+        if kind in accepted_problems
             global prob_count += 1
-            print("Found least squares problem n = $(prob_count)\n")
+            print("Found $(kind) n = $(prob_count)\n")
             md = mdopen(problem)
             MatrixDepot.addmetadata!(md.data)
             print("Name = $(md.data.name)\n")
-            A = md.A
+            A = float(md.A)
+            if issymmetric(A)
+                print("Skipping Symmetric matrix\n")
+                continue
+            end
+            (m, n) = size(A)
             new_problem =  Dict("A" => A, "name" => md.data.name)
             try
-                new_problem["b"] = md.b                
+                new_problem["b"] = float(md.b)
                 print("Storing also b\n")
             catch e
                 print("No field b. Creating random one.\n")
-                # From python
-                # s0 = np.random.randn(m)
-                # s0 = np.maximum(s0, 0)
-                # x0 = np.random.randn(n)
-                # A = np.random.randn(m, n)
-                # b = A@x0 + s0
+                s0 = randn(m)
+                x0 = randn(n)
+                b = A * x0 + s0
+                new_problem["b"] = b
+            end
+            file_name = replace("$(md.data.name).mat", "/" => "_")
+            try
+                # print("Type of A ", typeof(new_problem["A"]), "\n")
+                # print("Type of b ", typeof(new_problem["b"]), "\n")
+                # print("Type of name ", typeof(new_problem["name"]), "\n")
+                matwrite(file_name, new_problem)
+            catch e
+                print(e)
+                break
             end
             
-            push!(problems, new_problem)
+            print("Written to file $(file_name)\n")
         end
     else
         print("Wrong type extracted from metadata. Type = $(md_kind)\n")
@@ -43,4 +61,3 @@ for problem in list
 end
 
 print("Total number of problems = $(prob_count)\n")
-# If vector b does not appear, generate it

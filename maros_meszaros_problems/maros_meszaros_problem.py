@@ -170,5 +170,7 @@ class MarosMeszarosRunner(object):
             solution_dict['solve_time'] = results.solve_time
             solution_dict['update_time'] = results.update_time
 
+        print(" - Solved %s with solver %s" % (problem, solver))
+
         # Return solution
         return pd.DataFrame(solution_dict)

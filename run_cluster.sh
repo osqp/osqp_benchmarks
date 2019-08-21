@@ -8,7 +8,7 @@
 #SBATCH --mail-user=bartolomeo.stellato@gmail.com
 
 # Activate environment
-conda activate osqp
+source activate osqp
 
 # Run script
 python -u $1
