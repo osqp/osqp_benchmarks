@@ -19,16 +19,16 @@ for problem in list
     if split(md_kind)[1] == "kind:"  # Got the right kind
         kind = join(split(md_kind)[2:end], " ")
         if kind in accepted_problems
-            global prob_count += 1
-            print("Found $(kind) n = $(prob_count)\n")
             md = mdopen(problem)
             MatrixDepot.addmetadata!(md.data)
             print("Name = $(md.data.name)\n")
             A = float(md.A)
             if issymmetric(A)
-                print("Skipping Symmetric matrix\n")
-                continue
+                print("Making it a generic matrix\n")
+                A = SparseMatrixCSC(A)
             end
+            global prob_count += 1
+            print("Found $(kind) n = $(prob_count)\n")
             (m, n) = size(A)
             new_problem =  Dict("A" => A, "name" => md.data.name)
             try
