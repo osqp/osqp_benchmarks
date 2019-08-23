@@ -8,7 +8,7 @@ This code tests the solvers:
     - ECOS 
 
 '''
-from maros_meszaros_problems.maros_meszaros_problem import MarosMeszarosRunner
+from suitesparse_lasso_problems.suitesparse_lasso_problem import SuitesparseLassoRunner
 import solvers.solvers as s
 from utils.general import plot_performance_profiles
 from utils.benchmark import \
