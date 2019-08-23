@@ -19,9 +19,11 @@ class MarosMeszarosRunner(object):
     '''
     def __init__(self, 
                  solvers,
-                 settings):
+                 settings,
+                 output_folder):
         self.solvers = solvers
         self.settings = settings
+        self.output_folder = output_folder
 
         # Get maros problems list
         problems_dir = os.path.join(".", "problem_classes", PROBLEMS_FOLDER)
@@ -36,7 +38,7 @@ class MarosMeszarosRunner(object):
 
         The results are stored as
 
-            ./results/maros_meszaros_problems/{solver}/results.csv
+            ./results/{self.output_folder}/{solver}/results.csv
 
         using a pandas table with fields
             - 'name': Maros problem name
@@ -64,7 +66,7 @@ class MarosMeszarosRunner(object):
             #  results_solver = []
 
             # Solution directory
-            path = os.path.join('.', 'results', 'maros_meszaros_problems',
+            path = os.path.join('.', 'results', self.output_folder,
                                 solver)
 
             # Create directory for the results

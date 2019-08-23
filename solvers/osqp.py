@@ -35,7 +35,9 @@ class OSQPSolver(object):
         '''
         problem = example.qp_problem
         settings = self._settings.copy()
-        time_limit = settings.pop('time_limit', None)
+        high_accuracy = settings.pop('high_accuracy', None)
+
+        import ipdb; ipdb.set_trace()
 
         # Setup OSQP
         m = osqp.OSQP()
@@ -50,11 +52,12 @@ class OSQPSolver(object):
         if status in s.SOLUTION_PRESENT:
             if not is_qp_solution_optimal(problem,
                                           results.x,
-                                          results.y):
+                                          results.y,
+                                          high_accuracy=high_accuracy):
                 status = s.SOLVER_ERROR
 
         # Verify solver time
-        if time_limit is not None:
+        if settings.get('time_limit') is not None:
             if results.info.run_time > time_limit:
                 status = s.TIME_LIMIT
 

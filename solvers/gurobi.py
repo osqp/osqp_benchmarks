@@ -18,7 +18,7 @@ class GUROBISolver(object):
                   10: s.SOLVER_ERROR,
                   11: s.SOLVER_ERROR,
                   12: s.SOLVER_ERROR,
-                  13: s.SOLVER_ERROR}
+                  13: s.OPTIMAL_INACCURATE}
 
     def __init__(self, settings={}):
         '''
@@ -112,7 +112,8 @@ class GUROBISolver(object):
                 model.setParam("OutputFlag", 0)
 
         for param, value in self._settings.items():  # Set other parameters
-            if (param != "verbose") and (param != "time_limit"):
+            if (param != "verbose") and (param != "time_limit") \
+                    and (param != "high_accuracy"):
                 model.setParam(param, value)
 
         # Update model
@@ -147,7 +148,8 @@ class GUROBISolver(object):
             constrs = model.getConstrs()
             y = -np.array([constrs[i].Pi for i in range(m)])
 
-            if not is_qp_solution_optimal(p, x, y):
+            if not is_qp_solution_optimal(p, x, y,
+                                          high_accuracy=self._settings.get('high_accuracy')):
                 status = s.SOLVER_ERROR
 
             # Validate execution time

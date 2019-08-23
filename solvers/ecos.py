@@ -65,7 +65,8 @@ class ECOSSolver(object):
         x, y = example.revert_cvxpy_solution()
 
         # Validate status
-        if not is_qp_solution_optimal(example.qp_problem, x, y):
+        if not is_qp_solution_optimal(example.qp_problem, x, y,
+                                      high_accuracy=self._settings.get('high_accuracy')):
             status = s.SOLVER_ERROR
 
         # Validate execution time

@@ -117,7 +117,7 @@ class MOSEKSolver(object):
             if param == 'verbose':
                 if value is False:
                     self._handle_str_param(task, 'MSK_IPAR_LOG'.strip(), 0)
-            elif param != 'time_limit':
+            elif param != 'time_limit' and param != 'high_accuracy':
                 if isinstance(param, str):
                     self._handle_str_param(task, param.strip(), value)
                 else:
@@ -167,7 +167,8 @@ class MOSEKSolver(object):
             # it appears signs are inverted
             y = -y
 
-            if not is_qp_solution_optimal(p, x, y):
+            if not is_qp_solution_optimal(p, x, y,
+                                          high_accuracy=self._settings.get('high_accuracy')):
                 status = s.SOLVER_ERROR
 
             # Validate execution time

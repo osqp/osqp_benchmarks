@@ -95,7 +95,7 @@ class qpOASESSolver(object):
                 qpoases_cpu_time = np.array([value])
             elif param == 'nWSR':
                 qpoases_nWSR = np.array([value])
-            else:
+            elif param != "high_accuracy":
                 exec("options.%s = %s" % (param, value))
 
         qpoases_m.setOptions(options)
@@ -140,7 +140,7 @@ class qpOASESSolver(object):
 
                 y = np.concatenate((y, y_bounds))
 
-            if not is_qp_solution_optimal(p, x, y):
+            if not is_qp_solution_optimal(p, x, y, self._settings.get('high_accuracy')):
                 status = s.SOLVER_ERROR
 
             return Results(status, obj_val,
