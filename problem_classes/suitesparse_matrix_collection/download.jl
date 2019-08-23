@@ -4,7 +4,7 @@ using MAT
 using Random
 rand(0)
 
-accepted_problems = ["least squares problem", "optimization problem"]
+accepted_problems = ["least squares problem"]
 
 # List all problems (Filter some)
 list = mdlist("*/*")
@@ -43,9 +43,6 @@ for problem in list
             end
             file_name = replace("$(md.data.name).mat", "/" => "_")
             try
-                # print("Type of A ", typeof(new_problem["A"]), "\n")
-                # print("Type of b ", typeof(new_problem["b"]), "\n")
-                # print("Type of name ", typeof(new_problem["name"]), "\n")
                 matwrite(file_name, new_problem)
             catch e
                 print(e)
