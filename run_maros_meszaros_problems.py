@@ -20,13 +20,20 @@ import argparse
 
 
 parser = argparse.ArgumentParser(description='Maros Meszaros Runner')
-parser.add_argument('--high_accuracy', help='Test with high accuracy', default=False)
-parser.add_argument('--verbose', help='Verbose solvers', default=False)
-parser.add_argument('--parallel', help='Parallel solution', default=True)
+parser.add_argument('--high_accuracy', help='Test with high accuracy', default=False,
+                    action='store_true')
+parser.add_argument('--verbose', help='Verbose solvers', default=False,
+                    action='store_true')
+parser.add_argument('--parallel', help='Parallel solution', default=False,
+                    action='store_true')
 args = parser.parse_args()
 high_accuracy = args.high_accuracy
 verbose = args.verbose
 parallel = args.parallel
+
+print('high_accuracy', high_accuracy)
+print('verbose', verbose)
+print('parallel', parallel)
 
 # Add high accuracy solvers when accurazy
 if high_accuracy:
