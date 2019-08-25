@@ -2,8 +2,9 @@ import os
 import pandas as pd
 import numpy as np
 import solvers.statuses as statuses
+from solvers.solvers import time_limit
 
-MAX_TIMING = 1e8
+MAX_TIMING = time_limit
 
 
 def get_cumulative_data(solvers, problems):
@@ -125,7 +126,7 @@ def compute_shifted_geometric_means(solvers, problems_type):
     best_g_mean = np.min([g_mean[s] for s in solvers])
     for s in solvers:
         g_mean[s] /= best_g_mean
-                    
+
     # Store final pandas dataframe
     df_g_mean = pd.Series(g_mean)
     g_mean_file = os.path.join('.', 'results',
@@ -201,7 +202,9 @@ def compute_failure_rates(solvers, problems_type):
     f.close()
 
 
-def compute_polish_statistics(problems_type):
+def compute_polish_statistics(problems_type, high_accuracy=False):
+    name_high = "_high" if high_accuracy else ""
+    
     # Check if results file already exists
     results_file = os.path.join(".", "results", problems_type,
                                 "statistics.txt")
@@ -212,9 +215,9 @@ def compute_polish_statistics(problems_type):
 
     # Path where solver results are stored
     path_osqp = os.path.join('.', 'results', problems_type,
-                             'OSQP', 'results.csv')
+                             "OSQP" + name_high, 'results.csv')
     path_osqp_polish = os.path.join('.', 'results', problems_type,
-                                    'OSQP_polish', 'results.csv')
+                                    'OSQP_polish' + name_high, 'results.csv')
 
     # Load data frames
     df_osqp = pd.read_csv(path_osqp)

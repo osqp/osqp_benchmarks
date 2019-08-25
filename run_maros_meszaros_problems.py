@@ -38,13 +38,12 @@ print('parallel', parallel)
 # Add high accuracy solvers when accurazy
 if high_accuracy:
     solvers = [s.OSQP_high, s.OSQP_polish_high, s.GUROBI, s.MOSEK]
-    OUTPUT_FOLDER = 'maros_meszaros_problems'
+    OUTPUT_FOLDER = 'maros_meszaros_problems_high_accuracy'
     for key in s.settings:
         s.settings[key]['high_accuracy'] = True
-
 else:
     solvers = [s.OSQP, s.OSQP_polish, s.GUROBI, s.MOSEK]
-    OUTPUT_FOLDER = 'maros_meszaros_problems_high_accuracy'
+    OUTPUT_FOLDER = 'maros_meszaros_problems'
 
 # Shut up solvers
 if verbose:
@@ -57,7 +56,7 @@ maros_meszaros_runner = MarosMeszarosRunner(solvers,
                                             OUTPUT_FOLDER)
 
 # DEBUG only: Choose only 2 problems
-maros_meszaros_runner.problems = ["STADAT1", "BOYD1"]
+# maros_meszaros_runner.problems = ["STADAT1", "BOYD1"]
 
 maros_meszaros_runner.solve(parallel=parallel, cores=12)
 statistics_file = os.path.join(".", "results", OUTPUT_FOLDER,
@@ -74,8 +73,7 @@ compute_performance_profiles(solvers, OUTPUT_FOLDER)
 compute_shifted_geometric_means(solvers, OUTPUT_FOLDER)
 
 # Compute polish statistics
-compute_polish_statistics(OUTPUT_FOLDER)
+compute_polish_statistics(OUTPUT_FOLDER, high_accuracy=high_accuracy)
 
 # Plot performance profiles
-plot_performance_profiles(OUTPUT_FOLDER,
-                          ["OSQP", "GUROBI",  "MOSEK"])
+plot_performance_profiles(OUTPUT_FOLDER, solvers)

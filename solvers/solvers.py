@@ -26,7 +26,7 @@ SOLVER_MAP = {OSQP: OSQPSolver,
               ECOS: ECOSSolver,
               qpOASES: qpOASESSolver}
 
-time_limit = 10.  # Seconds
+time_limit = 1000.  # Seconds
 
 # Solver settings
 settings = {
