@@ -16,17 +16,19 @@ class SuitesparseLassoRunner(object):
     '''
     Examples runner
     '''
-    def __init__(self, 
+    def __init__(self,
                  solvers,
-                 settings):
+                 settings,
+                 output_folder):
         self.solvers = solvers
         self.settings = settings
+        self.output_folder = output_folder
 
         # Get problems list
         problems_dir = os.path.join(".", "problem_classes", PROBLEMS_FOLDER)
         # List of problems in .mat format
         lst_probs = [f for f in os.listdir(problems_dir) if \
-            f.endswith('.mat')] 
+            f.endswith('.mat')]
         self.problems = [f[:-4] for f in lst_probs]   # List of problem names
 
 
@@ -36,7 +38,7 @@ class SuitesparseLassoRunner(object):
 
         The results are stored as
 
-            ./results/suitesparse_lasso_problems/{solver}/results.csv
+            ./results/{self.output_folder}/{solver}/results.csv
 
         using a pandas table with fields
             - 'name': problem name
@@ -64,7 +66,7 @@ class SuitesparseLassoRunner(object):
             #  results_solver = []
 
             # Solution directory
-            path = os.path.join('.', 'results', 'suitesparse_lasso_problems',
+            path = os.path.join('.', 'results', self.output_folder,
                                 solver)
 
             # Create directory for the results
@@ -132,7 +134,7 @@ class SuitesparseLassoRunner(object):
         P = instance.qp_problem['P']
         A = instance.qp_problem['A']
         N = P.nnz + A.nnz
-        
+
         solution_dict = {'name': [problem],
                          'solver': [solver],
                          'status': [results.status],

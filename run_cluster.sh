@@ -11,4 +11,4 @@
 source activate osqp
 
 # Run script
-python -u $1 --parallel
+python -u $1 --parallel --high_accuracy

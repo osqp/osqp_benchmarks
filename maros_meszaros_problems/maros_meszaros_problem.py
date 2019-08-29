@@ -17,7 +17,7 @@ class MarosMeszarosRunner(object):
     '''
     Examples runner
     '''
-    def __init__(self, 
+    def __init__(self,
                  solvers,
                  settings,
                  output_folder):
@@ -29,7 +29,7 @@ class MarosMeszarosRunner(object):
         problems_dir = os.path.join(".", "problem_classes", PROBLEMS_FOLDER)
         # List of problems in .mat format
         lst_probs = [f for f in os.listdir(problems_dir) if \
-            f.endswith('.mat')] 
+            f.endswith('.mat')]
         self.problems = [f[:-4] for f in lst_probs]   # List of problem names
 
     def solve(self, parallel=True, cores=32):
@@ -136,12 +136,12 @@ class MarosMeszarosRunner(object):
         N = P.nnz + A.nnz
 
         # Add constant part to objective value
-        # NB. This is needed to match the objective in the original 
+        # NB. This is needed to match the objective in the original
         # Maros Meszaros paper
         obj = results.obj_val
         if results.obj_val is not None:
-            obj += instance.qp_problem["r"]         
-        
+            obj += instance.qp_problem["r"]
+
         # Optimal cost distance from Maros Meszaros results
         # (For DEBUG)
         # ( obj - opt_obj )/(|opt_obj|)
