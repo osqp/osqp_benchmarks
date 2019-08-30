@@ -32,12 +32,14 @@ class Example(object):
                  dims,
                  solvers,
                  settings,
+                 output_folder,
                  n_instances=10):
         self.name = name
         self.dims = dims
         self.n_instances = n_instances
         self.solvers = solvers
         self.settings = settings
+        self.output_folder = output_folder
 
     def solve(self, parallel=True):
         '''
@@ -45,7 +47,7 @@ class Example(object):
 
         The results are stored as
 
-            ./results/benchmark_problems/{solver}/{class}/n{dimension}.csv
+            ./results/{self.output_folder}/{solver}/{class}/n{dimension}.csv
 
         using a pandas table with fields
             - 'class': example class
@@ -72,7 +74,7 @@ class Example(object):
             results_solver = []
 
             # Solution directory
-            path = os.path.join('.', 'results', 'benchmark_problems',
+            path = os.path.join('.', 'results', self.output_folder,
                                 solver,
                                 self.name
                                 )
@@ -171,6 +173,9 @@ class Example(object):
         # Add status polish if OSQP
         if solver[:4] == 'OSQP':
             solution_dict['status_polish'] = results.status_polish
+            solution_dict['setup_time'] = results.setup_time
+            solution_dict['solve_time'] = results.solve_time
+            solution_dict['update_time'] = results.update_time
 
         # Return solution
         return pd.DataFrame(solution_dict)

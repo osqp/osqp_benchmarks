@@ -7,11 +7,11 @@ from solvers.solvers import time_limit
 MAX_TIMING = time_limit
 
 
-def get_cumulative_data(solvers, problems):
+def get_cumulative_data(solvers, problems, output_folder):
     for solver in solvers:
 
         # Path where solver results are stored
-        path = os.path.join('.', 'results', 'benchmark_problems', solver)
+        path = os.path.join('.', 'results', output_folder, solver)
 
         # Initialize cumulative results
         results = []
@@ -96,7 +96,7 @@ def compute_performance_profiles(solvers, problems_type):
 
 def geom_mean(t, shift=10.):
     return np.power(np.prod(t + shift), 1/len(t)) - shift
-    
+
 
 def compute_shifted_geometric_means(solvers, problems_type):
     t = {}
@@ -204,7 +204,7 @@ def compute_failure_rates(solvers, problems_type):
 
 def compute_polish_statistics(problems_type, high_accuracy=False):
     name_high = "_high" if high_accuracy else ""
-    
+
     # Check if results file already exists
     results_file = os.path.join(".", "results", problems_type,
                                 "statistics.txt")

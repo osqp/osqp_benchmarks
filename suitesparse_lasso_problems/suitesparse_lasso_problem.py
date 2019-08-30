@@ -141,7 +141,6 @@ class SuitesparseLassoRunner(object):
                          'run_time': [results.run_time],
                          'iter': [results.niter],
                          'obj_val': [results.obj_val],
-                         #  'obj_dist': [obj_dist],
                          'n': [instance.qp_problem["n"]],
                          'm': [instance.qp_problem["m"]],
                          'N': [N]}

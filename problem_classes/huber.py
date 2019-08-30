@@ -44,6 +44,7 @@ class HuberExample(object):
         #                   s >= 0
         # The problem reformulation follows from Eq. (24) of the following paper:
         # https://doi.org/10.1109/34.877518
+        # x_solver = (x, z, r, s)
         Im = spa.eye(self.m)
         P = spa.block_diag((spa.csc_matrix((self.n, self.n)), Im,
                             spa.csc_matrix((2*self.m, 2*self.m))), format='csc')
@@ -86,43 +87,42 @@ class HuberExample(object):
         '''
         Generate QP problem
         '''
-        # Model with CVXPY
-        #       minimize	1/2 u.T * u + np.ones(m).T * v
-        #       subject to  -u - v <= Ax - b <= u + v
-        #                   0 <= u <= 1
-        #                   v >= 0
+        # Construct the problem
+        #       minimize    1/2 z.T * z + np.ones(m).T * (r + s)
+        #       subject to  Ax - b - z = r - s
+        #                   r >= 0
+        #                   s >= 0
+        # The problem reformulation follows from Eq. (24) of the following paper:
+        # https://doi.org/10.1109/34.877518
         x = cvxpy.Variable(self.n)
-        u = cvxpy.Variable(self.m)
-        v = cvxpy.Variable(self.m)
+        z = cvxpy.Variable(self.m)
+        r = cvxpy.Variable(self.m)
+        s = cvxpy.Variable(self.m)
 
-        objective = cvxpy.Minimize(.5 * cvxpy.quad_form(u, spa.eye(self.m))
-                                   + np.ones(self.m) * v)
-        constraints = [-u - v <= self.Ad * x - self.bd,
-                       self.Ad * x - self.bd <= u + v,
-                       0. <= u, u <= 1.,
-                       v >= 0.]
+        objective = cvxpy.Minimize(.5 * cvxpy.sum_squares(z) + cvxpy.sum(r + s))
+        constraints = [self.Ad@x - self.bd - z == r - s,
+                       r >= 0, s >= 0]
         problem = cvxpy.Problem(objective, constraints)
 
-        return problem, (x, u, v)
+        return problem, (x, z, r, s)
 
     def revert_cvxpy_solution(self):
         '''
         Get QP primal and duar variables from cvxpy solution
         '''
 
-        (x_cvx, u_cvx, v_cvx) = self.cvxpy_variables
+        (x_cvx, z_cvx, r_cvx, s_cvx) = self.cvxpy_variables
         constraints = self.cvxpy_problem.constraints
 
         # primal solution
         x = np.concatenate((x_cvx.value,
-                            u_cvx.value,
-                            v_cvx.value))
+                            z_cvx.value,
+                            r_cvx.value,
+                            s_cvx.value))
 
         # dual solution
-        y = np.concatenate((-constraints[0].dual_value,
-                            constraints[1].dual_value,
-                            constraints[3].dual_value -
-                            constraints[2].dual_value,
-                            -constraints[4].dual_value))
+        y = np.concatenate((constraints[0].dual_value,
+                            -constraints[1].dual_value,
+                            -constraints[2].dual_value))
 
         return x, y

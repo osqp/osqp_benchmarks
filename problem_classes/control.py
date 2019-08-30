@@ -168,8 +168,8 @@ class ControlExample(object):
         x0.value = self.x0
 
         # variables
-        x = cvxpy.Variable(nx, T + 1)
-        u = cvxpy.Variable(nu, T)
+        x = cvxpy.Variable((nx, T + 1))
+        u = cvxpy.Variable((nu, T))
 
         # Objective
         cost = cvxpy.quad_form(x[:, T], self.QN)  # Terminal cost
@@ -209,8 +209,8 @@ class ControlExample(object):
         T = self.T
 
         # primal solution
-        x = np.concatenate((x_cvx.value.T,
-                            u_cvx.value.T))
+        x = np.concatenate((cvxpy.vec(x_cvx).value,
+                            cvxpy.vec(u_cvx).value))
 
         # dual solution
         constraint_values = [constr.dual_value for constr in constraints]

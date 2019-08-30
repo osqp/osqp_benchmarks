@@ -47,8 +47,6 @@ else:
     solvers = [s.OSQP, s.OSQP_polish, s.GUROBI, s.MOSEK]
     OUTPUT_FOLDER = 'suitesparse_lasso_problems'
 
-
-# Shut up solvers
 if verbose:
     for key in s.settings:
         s.settings[key]['verbose'] = True
@@ -65,8 +63,7 @@ suitesparse_lasso_runner.solve(parallel=parallel, cores=12)
 
 
 
-statistics_file = os.path.join(".", "results", OUTPUT_FOLDER,
-                               "statistics.txt")
+statistics_file = os.path.join(".", "results", OUTPUT_FOLDER, "statistics.txt")
 print("Saving statistics to %s" % statistics_file)
 
 # Compute failure rates
