@@ -61,5 +61,5 @@ settings = {
 }
 
 for key in settings:
-    settings[key]['verbose'] = True
+    settings[key]['verbose'] = False
     settings[key]['time_limit'] = time_limit

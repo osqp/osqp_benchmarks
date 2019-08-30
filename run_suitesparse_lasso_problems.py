@@ -59,7 +59,7 @@ suitesparse_lasso_runner = SuitesparseLassoRunner(solvers,
                                                   OUTPUT_FOLDER)
 
 # DEBUG Only two problems
-#  suitesparse_lasso_runner.problems = ['HB_abb313', 'HB_ash331']
+#  suitesparse_lasso_runner.problems = ['Springer_ESOC']  # ['HB_abb313', 'HB_ash331']
 
 suitesparse_lasso_runner.solve(parallel=parallel, cores=12)
 
