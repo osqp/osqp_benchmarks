@@ -152,7 +152,7 @@ class GUROBISolver(object):
                                           high_accuracy=self._settings.get('high_accuracy')):
                 status = s.SOLVER_ERROR
 
-            # Validate execution time
+            # Validate execution time (do not trust commercial solvers)
             if 'time_limit' in self._settings:
                 if run_time > self._settings['time_limit']:
                     status = s.TIME_LIMIT

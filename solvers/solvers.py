@@ -26,7 +26,7 @@ SOLVER_MAP = {OSQP: OSQPSolver,
               ECOS: ECOSSolver,
               qpOASES: qpOASESSolver}
 
-time_limit = 1000.  # Seconds
+time_limit = 1000. # Seconds
 
 # Solver settings
 settings = {
@@ -51,15 +51,15 @@ settings = {
                        'eps_rel': 1e-05,
                        'polish': True,
                        'max_iter': int(1e09),
-                       'eps_prim_inf': 1e-15,  # Disable infeas check 
+                       'eps_prim_inf': 1e-15,  # Disable infeas check
                        'eps_dual_inf': 1e-15
     },
-    GUROBI: {},
-    MOSEK: {},
+    GUROBI: {'TIME_LIMIT': time_limit},
+    MOSEK: {'MSK_DPAR_OPTIMIZER_MAX_TIME': time_limit},
     ECOS: {},
     qpOASES: {}
 }
 
 for key in settings:
-    settings[key]['verbose'] = False
+    settings[key]['verbose'] = True
     settings[key]['time_limit'] = time_limit

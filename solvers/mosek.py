@@ -128,7 +128,7 @@ class MOSEKSolver(object):
         '''
         try:
             # Optimization and check termination code
-            task.optimize()
+            termination_code = task.optimize()
         except:
             if self._settings['verbose']:
                 print("Error in MOSEK solution\n")
@@ -151,6 +151,12 @@ class MOSEKSolver(object):
         # Map status using statusmap
         status = self.STATUS_MAP.get(solsta, s.SOLVER_ERROR)
 
+        # Check if the return code is max time and change status
+        # MOSEK does not return max time as solution status
+        # but as a solver status
+        if termination_code == mosek.rescode.trm_max_time:
+            status = s.TIME_LIMIT
+
         # Get statistics
         cputime = task.getdouinf(mosek.dinfitem.optimizer_time)
         total_iter = task.getintinf(mosek.iinfitem.intpnt_iter)
@@ -171,7 +177,7 @@ class MOSEKSolver(object):
                                           high_accuracy=self._settings.get('high_accuracy')):
                 status = s.SOLVER_ERROR
 
-            # Validate execution time
+            # Validate execution time (do not trust commercial solvers)
             if 'time_limit' in self._settings:
                 if cputime > self._settings['time_limit']:
                     status = s.TIME_LIMIT

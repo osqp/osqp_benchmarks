@@ -39,12 +39,12 @@ print('parallel', parallel)
 
 # Add high accuracy solvers when accurazy
 if high_accuracy:
-    solvers = [s.OSQP_high, s.OSQP_polish_high, s.GUROBI, s.MOSEK, s.ECOS]
+    solvers = [s.OSQP_high, s.OSQP_polish_high, s.GUROBI, s.MOSEK]
     OUTPUT_FOLDER = 'suitesparse_lasso_problems_high_accuracy'
     for key in s.settings:
         s.settings[key]['high_accuracy'] = True
 else:
-    solvers = [s.OSQP, s.OSQP_polish, s.GUROBI, s.MOSEK, s.ECOS]
+    solvers = [s.OSQP, s.OSQP_polish, s.GUROBI, s.MOSEK]
     OUTPUT_FOLDER = 'suitesparse_lasso_problems'
 
 
@@ -61,7 +61,7 @@ suitesparse_lasso_runner = SuitesparseLassoRunner(solvers,
 # DEBUG Only two problems
 #  suitesparse_lasso_runner.problems = ['HB_abb313', 'HB_ash331']
 
-suitesparse_lasso_runner.solve(parallel=True, cores=12)
+suitesparse_lasso_runner.solve(parallel=parallel, cores=12)
 
 
 
