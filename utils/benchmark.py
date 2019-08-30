@@ -4,7 +4,32 @@ import numpy as np
 import solvers.statuses as statuses
 from solvers.solvers import time_limit
 
+# Plotting
+import matplotlib
+matplotlib.use('Agg')
+import matplotlib.pylab as plt
+
 MAX_TIMING = time_limit
+
+def plot_performance_profiles(problems, solvers):
+    """
+    Plot performance profiles in matplotlib for specified problems and solvers
+    """
+    df = pd.read_csv('./results/%s/performance_profiles.csv' % problems)
+    plt.figure(0)
+    for solver in solvers:
+        plt.plot(df["tau"], df[solver], label=solver)
+    plt.xlim(1., 10000.)
+    plt.ylim(0., 1.)
+    plt.xlabel(r'Performance ratio $\tau$')
+    plt.ylabel('Ratio of problems solved')
+    plt.xscale('log')
+    plt.legend()
+    plt.grid()
+    plt.show(block=False)
+    results_file = './results/%s/%s.png' % (problems, problems)
+    print("Saving plots to %s" % results_file)
+    plt.savefig(results_file)
 
 
 def get_cumulative_data(solvers, problems, output_folder):
@@ -175,15 +200,10 @@ def compute_failure_rates(solvers, problems_type):
     """
     Compute and show failure rates
     """
+    failure_rates = {}
 
     # Check if results file already exists
-    results_file = os.path.join(".", "results", problems_type,
-                                "statistics.txt")
-
-    # Always overwrite file
-    f = open(results_file, "w")
-
-    f.write('[Failure rates]\n')
+    failure_rates_file = os.path.join(".", "results", problems_type, "failure_rates.csv")
     for solver in solvers:
         results_file = os.path.join('.', 'results', problems_type,
                                     solver, 'results.csv')
@@ -194,25 +214,19 @@ def compute_failure_rates(solvers, problems_type):
         failed_statuses = np.logical_and(*[df['status'].values != s
                                            for s in statuses.SOLUTION_PRESENT])
         n_failed_problems = np.sum(failed_statuses)
-        failure_rate = n_failed_problems / n_problems
+        failure_rates[solver] = n_failed_problems / n_problems
 
-        f.write(" - %s = %.4f %%\n" % (solver, 100 * failure_rate))
-    f.write("\n")
-
-    f.close()
+    # Write csv file
+    df_failure_rates = pd.Series(failure_rates)
+    df_failure_rates.to_csv(failure_rates_file, header=False, index=True)
 
 
 def compute_polish_statistics(problems_type, high_accuracy=False):
     name_high = "_high" if high_accuracy else ""
 
     # Check if results file already exists
-    results_file = os.path.join(".", "results", problems_type,
-                                "statistics.txt")
-    if os.path.exists(results_file):
-        f = open(results_file, "a")
-    else:
-        f = open(results_file, "w")
-
+    polish_file = os.path.join(".", "results", problems_type,
+            "polish_statistics.csv")
     # Path where solver results are stored
     path_osqp = os.path.join('.', 'results', problems_type,
                              "OSQP" + name_high, 'results.csv')
@@ -232,44 +246,73 @@ def compute_polish_statistics(problems_type, high_accuracy=False):
     # Compute time increase
     osqp_time = df_osqp['run_time'].values
     osqp_polish_time = df_osqp_polish['run_time'].values
-    time_increase = np.zeros(n_problems)
+    time_increase = osqp_polish_time / osqp_time
 
-    for i in range(n_problems):
-        time_increase = osqp_polish_time / osqp_time
-
-    polish_successs = np.sum(df_osqp_polish['status_polish'] == 1) \
+    polish_success = np.sum(df_osqp_polish['status_polish'] == 1) \
         / n_problems
 
     # Print results
-    f.write("\n[OSQP Polish benchmarks]\n")
-    f.write("  - Median time increase:  %.2fx\n" % np.median(time_increase))
-    f.write("  - Percentage of success: %.2f %%\n" % (polish_successs * 100))
-    f.write("\n")
-    f.close()
+    polish_statistics = {'median_time_increase': np.median(time_increase),
+                         'percentage_of_success': (polish_success * 100)}
+
+    df_polish = pd.Series(polish_statistics)
+    df_polish.to_csv(polish_file, header=False, index=True)
 
 
-#  def constrain_execution_time(solvers, problems,
-#                               problem_dimensions, time_limit):
-#      """
-#      Change status to solver_error when execution time exceeds time_limit
-#      """
-#
-#      for solver in solvers:
-#          for problem in problems:
-#              for dim in problem_dimensions[problem]:
-#                  file_to_read = os.path.join('.', 'results',
-#                                              'benchmark_problems',
-#                                              solver,
-#                                              problem,
-#                                              'n%i.csv' % dim)
-#                  df = pd.read_csv(file_to_read)
-#                  n_instances = len(df)
-#                  status_list = []
-#                  for i in range(n_instances):
-#                      if df['run_time'].values[i] > time_limit:
-#                          status_list.append(statuses.SOLVER_ERROR)
-#                      else:
-#                          status_list.append(df['status'].values[i])
-#
-#                  df['status'] = status_list
-#                  df.to_csv(file_to_read, index=False)
+def compute_ratio_setup_solve(problems_type, high_accuracy=False):
+    name_high = "_high" if high_accuracy else ""
+
+    # Check if results file already exists
+    ratio_file = os.path.join(".", "results", problems_type,
+            "ratio_setup_solve.csv")
+    # Path where solver results are stored
+    path_osqp = os.path.join('.', 'results', problems_type,
+                             "OSQP" + name_high, 'results.csv')
+    # Load data frames
+    df_osqp = pd.read_csv(path_osqp)
+
+    # Take only problems where osqp has success
+    successful_problems = df_osqp['status'] == statuses.OPTIMAL
+    df_osqp = df_osqp.loc[successful_problems]
+    n_problems = len(df_osqp)
+
+    # Compute time increase
+    osqp_setup_time = df_osqp['setup_time'].values
+    osqp_solve_time = df_osqp['solve_time'].values
+    ratios = np.divide(osqp_setup_time, osqp_solve_time)
+
+    # Print results
+    ratio_stats = {'mean_ratio': np.mean(ratios),
+                   'median_ratio': np.median(ratios)}
+
+    df_ratio = pd.Series(ratio_stats)
+    df_ratio.to_csv(ratio_file, header=False, index=True)
+
+
+def compute_stats_info(solvers, benchmark_type,
+                       problems=None,
+                       high_accuracy=False,
+                       performance_profiles=True):
+
+    if problems is not None:
+        # Collect cumulative data for each solver
+        # If there are multiple problems defined
+        get_cumulative_data(solvers, problems, benchmark_type)
+
+    # Compute failure rates
+    compute_failure_rates(solvers, benchmark_type)
+
+    # Compute performance profiles
+    compute_performance_profiles(solvers, benchmark_type)
+
+    # Compute performance profiles
+    compute_shifted_geometric_means(solvers, benchmark_type)
+
+    # Compute polish statistics
+    if any(s.startswith('OSQP') for s in solvers):
+        compute_polish_statistics(benchmark_type, high_accuracy=high_accuracy)
+        compute_ratio_setup_solve(benchmark_type, high_accuracy=high_accuracy)
+
+    # Plot performance profiles
+    if performance_profiles:
+        plot_performance_profiles(benchmark_type, solvers)

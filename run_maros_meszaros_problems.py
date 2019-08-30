@@ -10,11 +10,7 @@ This code tests the solvers:
 from maros_meszaros_problems.maros_meszaros_problem import MarosMeszarosRunner
 import solvers.solvers as s
 from utils.general import plot_performance_profiles
-from utils.benchmark import \
-    compute_performance_profiles, \
-    compute_shifted_geometric_means, \
-    compute_failure_rates, \
-    compute_polish_statistics
+from utils.benchmark import compute_stats_info
 import os
 import argparse
 
@@ -59,21 +55,7 @@ maros_meszaros_runner = MarosMeszarosRunner(solvers,
 # maros_meszaros_runner.problems = ["STADAT1", "BOYD1"]
 
 maros_meszaros_runner.solve(parallel=parallel, cores=12)
-statistics_file = os.path.join(".", "results", OUTPUT_FOLDER,
-                               "statistics.txt")
-print("Saving statistics to %s" % statistics_file)
 
-# Compute failure rates
-compute_failure_rates(solvers, OUTPUT_FOLDER)
-
-# Compute performance profiles
-compute_performance_profiles(solvers, OUTPUT_FOLDER)
-
-# Compute performance profiles
-compute_shifted_geometric_means(solvers, OUTPUT_FOLDER)
-
-# Compute polish statistics
-compute_polish_statistics(OUTPUT_FOLDER, high_accuracy=high_accuracy)
-
-# Plot performance profiles
-plot_performance_profiles(OUTPUT_FOLDER, solvers)
+# Compute results statistics
+compute_stats_info(solvers, OUTPUT_FOLDER,
+                   high_accuracy=high_accuracy)

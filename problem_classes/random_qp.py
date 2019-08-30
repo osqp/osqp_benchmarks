@@ -19,16 +19,18 @@ class RandomQPExample(object):
         # Generate problem data
         self.n = int(n)
         self.m = m
-        P = spa.random(n, n, density=0.5,
+        P = spa.random(n, n, density=0.15,
                        data_rvs=np.random.randn,
                        format='csc')
-        self.P = P.dot(P.T).tocsc()
+        self.P = P.dot(P.T).tocsc() + 1e-02 * spa.eye(n)
         self.q = np.random.randn(n)
-        self.A = spa.random(m, n, density=0.5,
+        self.A = spa.random(m, n, density=0.15,
                             data_rvs=np.random.randn,
                             format='csc')
-        self.l = -np.random.rand(m)
-        self.u = np.random.rand(m)
+        v = np.random.randn(n)   # Fictitious solution
+        delta = np.random.rand(m)  # To get inequality
+        self.u = self.A@v + delta
+        self.l = - np.inf * np.ones(m)  # self.u - np.random.rand(m)
 
         self.qp_problem = self._generate_qp_problem()
         self.cvxpy_problem = self._generate_cvxpy_problem()

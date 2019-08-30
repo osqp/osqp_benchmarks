@@ -11,12 +11,8 @@ This code tests the solvers:
 '''
 from benchmark_problems.example import Example
 import solvers.solvers as s
-from utils.general import gen_int_log_space, plot_performance_profiles
-from utils.benchmark import get_cumulative_data, \
-    compute_performance_profiles, \
-    compute_failure_rates, \
-    compute_polish_statistics, \
-    compute_shifted_geometric_means
+from utils.general import gen_int_log_space
+from utils.benchmark import compute_stats_info
 import os
 import argparse
 
@@ -42,7 +38,7 @@ print('parallel', parallel)
 
 # Add high accuracy solvers when accurazy
 if high_accuracy:
-    solvers = [s.OSQP_high, s.OSQP_polish_high, s.GUROBI, s.MOSEK, s.qpOASES]
+    solvers = [s.OSQP_high, s.OSQP_polish_high, s.GUROBI, s.MOSEK, s.ECOS, s.qpOASES]
     OUTPUT_FOLDER = 'benchmark_problems_high_accuracy'
     for key in s.settings:
         s.settings[key]['high_accuracy'] = True
@@ -104,24 +100,7 @@ for problem in problems:
                       n_instances)
     example.solve(parallel=problem_parallel[problem])
 
-
-# Collect cumulative data for each solver
-get_cumulative_data(solvers, problems, OUTPUT_FOLDER)
-
-statistics_file = os.path.join(".", "results", OUTPUT_FOLDER, "statistics.txt")
-print("Saving statistics to %s" % statistics_file)
-
-# Compute failure rates
-compute_failure_rates(solvers, OUTPUT_FOLDER)
-
-# Compute performance profiles
-compute_performance_profiles(solvers, OUTPUT_FOLDER)
-
-# Compute performance profiles
-compute_shifted_geometric_means(solvers, OUTPUT_FOLDER)
-
-# Compute polish statistics
-compute_polish_statistics(OUTPUT_FOLDER, high_accuracy=high_accuracy)
-
-# Plot performance profiles
-plot_performance_profiles(OUTPUT_FOLDER, solvers)
+# Compute results statistics
+compute_stats_info(solvers, OUTPUT_FOLDER,
+                   problems=problems,
+                   high_accuracy=high_accuracy)

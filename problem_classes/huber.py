@@ -17,7 +17,7 @@ class HuberExample(object):
         self.n = int(n)               # Number of features
         self.m = int(self.n * 100)    # Number of data-points
 
-        self.Ad = spa.random(self.m, self.n, density=0.5,
+        self.Ad = spa.random(self.m, self.n, density=0.15,
                              data_rvs=np.random.randn)
         self.x_true = np.random.randn(n) / np.sqrt(n)
         ind95 = (np.random.rand(self.m) < 0.95).astype(float)

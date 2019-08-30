@@ -7,11 +7,6 @@ import sys
 from contextlib import contextmanager
 
 
-# Plotting
-import pandas as pd
-import matplotlib
-matplotlib.use('Agg')
-import matplotlib.pylab as plt
 
 
 @contextmanager
@@ -139,24 +134,4 @@ def is_qp_solution_optimal(qp_problem, x, y, high_accuracy=False):
     # If we arrived until here, the solution is optimal
     return True
 
-
-def plot_performance_profiles(problems, solvers):
-    """
-    Plot performance profiles in matplotlib for specified problems and solvers
-    """
-    df = pd.read_csv('./results/%s/performance_profiles.csv' % problems)
-    plt.figure(0)
-    for solver in solvers:
-        plt.plot(df["tau"], df[solver], label=solver)
-    plt.xlim(1., 10000.)
-    plt.ylim(0., 1.)
-    plt.xlabel(r'Performance ratio $\tau$')
-    plt.ylabel('Ratio of problems solved')
-    plt.xscale('log')
-    plt.legend()
-    plt.grid()
-    plt.show(block=False)
-    results_file = './results/%s/%s.png' % (problems, problems)
-    print("Saving plots to %s" % results_file)
-    plt.savefig(results_file)
 

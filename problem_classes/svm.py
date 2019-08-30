@@ -21,9 +21,9 @@ class SVMExample(object):
         self.N = int(self.m / 2)
         self.gamma = 1.0
         self.b_svm = np.append(np.ones(self.N), -np.ones(self.N))
-        A_upp = spa.random(self.N, self.n, density=.5,
+        A_upp = spa.random(self.N, self.n, density=.15,
                            data_rvs=np.random.randn)
-        A_low = spa.random(self.N, self.n, density=.5,
+        A_low = spa.random(self.N, self.n, density=.15,
                            data_rvs=np.random.randn)
         self.A_svm = spa.vstack([
             A_upp / np.sqrt(self.n) + (A_upp != 0.).astype(float) / self.n,

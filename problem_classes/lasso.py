@@ -17,7 +17,7 @@ class LassoExample(object):
         self.n = int(n)               # Number of features
         self.m = int(self.n * 100)    # Number of data-points
 
-        self.Ad = spa.random(self.m, self.n, density=0.5,
+        self.Ad = spa.random(self.m, self.n, density=0.15,
                              data_rvs=np.random.randn)
         self.x_true = np.multiply((np.random.rand(self.n) >
                                    0.5).astype(float),
