@@ -77,6 +77,22 @@ class GUROBISolver(object):
         # Add inequality constraints: iterate over the rows of A
         # adding each row into the model
         if p['A'] is not None:
+            # Ignore newer interface for now
+            #  if hasattr(model, '_v811_addMConstrs'):
+            #      # New interface, all constraints at once
+            #      # Get senses
+            #      senses = np.repeat(grb.GRB.EQUAL, m)
+            #      double_idx = np.array([])  # Array of double constrants for ranges
+            #      for i in range(m):
+            #          #  if (np.abs(l[i] - u[i]) < 1e-08):
+            #          #      # equal case already handled!
+            #          if (l[i] == -grb.GRB.INFINITY) & (u[i] != grb.GRB.INFINITY):
+            #              senses[i] = grb.GRB.LESS_EQUAL
+            #          elif (l[i] != -grb.GRB.INFINITY) & (u[i] == grb.GRB.INFINITY):
+            #      # Construct sense
+            #
+            #  else:
+            # Old interface
             for i in range(m):
                 start = p['A'].indptr[i]
                 end = p['A'].indptr[i+1]
@@ -95,13 +111,18 @@ class GUROBISolver(object):
 
         # Define objective
         if p['P'] is not None:
-            obj = grb.QuadExpr()  # Set quadratic part
-            if p['P'].count_nonzero():  # If there are any nonzero elms in P
-                for i in range(p['P'].nnz):
-                    obj.add(.5*p['P'].data[i] *
-                            x[p['P'].row[i]]*x[p['P'].col[i]])
-            obj.add(grb.LinExpr(p['q'], x))  # Add linear part
-            model.setObjective(obj)  # Set objective
+            if hasattr(model, '_v811_setMObjective'):
+                # New interface for gurobi > v8.1.1
+                model._v811_setMObjective(0.5 * p['P'], p['q'])
+            else:
+                #  Old interface
+                obj = grb.QuadExpr()  # Set quadratic part
+                if p['P'].count_nonzero():  # If there are any nonzero elms in P
+                    for i in range(p['P'].nnz):
+                        obj.add(.5*p['P'].data[i] *
+                                x[p['P'].row[i]]*x[p['P'].col[i]])
+                obj.add(grb.LinExpr(p['q'], x))  # Add linear part
+                model.setObjective(obj)  # Set objective
 
         # Set parameters
         if 'verbose' in self._settings:  # if verbose is null, suppress it

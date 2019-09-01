@@ -24,14 +24,14 @@ class SuitesparseLasso(object):
 
     def _load_suitesparse_lasso_data(self, file):
         # Import with pytables
-        f = tables.open_file(file + '.mat')
-        self.bd = f.root['b'][:].flatten()
-        A_indices = f.root['A']['ir'][:]
-        A_pointers = f.root['A']['jc'][:]
-        A_data = f.root['A']['data'][:]
-        self.n = len(A_pointers) - 1
-        self.m = len(self.bd)
-        self.Ad = spa.csc_matrix((A_data, A_indices, A_pointers), shape=(self.m, self.n))
+        with tables.open_file(file + '.mat') as f:
+            self.bd = f.root['b'][:].flatten()
+            A_indices = f.root['A']['ir'][:]
+            A_pointers = f.root['A']['jc'][:]
+            A_data = f.root['A']['data'][:]
+            self.n = len(A_pointers) - 1
+            self.m = len(self.bd)
+            self.Ad = spa.csc_matrix((A_data, A_indices, A_pointers), shape=(self.m, self.n))
 
         # Construct Lasso problem
         self.lambda_max = np.linalg.norm(self.Ad.T.dot(self.bd), np.inf)
@@ -39,7 +39,7 @@ class SuitesparseLasso(object):
 
     @staticmethod
     def name():
-        return 'Suitesparse Lasso'
+        return 'Lasso'
 
     def _generate_qp_problem(self):
         '''

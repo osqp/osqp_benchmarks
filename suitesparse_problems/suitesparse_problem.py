@@ -9,17 +9,27 @@ from utils.general import make_sure_path_exists
 
 import numpy as np
 
+from problem_classes.suitesparse_lasso import SuitesparseLasso
+from problem_classes.suitesparse_huber import SuitesparseHuber
+
+examples = [SuitesparseLasso,
+            SuitesparseHuber]
+
+EXAMPLES_MAP = {example.name(): example for example in examples}
+
 PROBLEMS_FOLDER = "suitesparse_matrix_collection"
 
 
-class SuitesparseLassoRunner(object):
+class SuitesparseRunner(object):
     '''
     Examples runner
     '''
     def __init__(self,
+                 name,
                  solvers,
                  settings,
                  output_folder):
+        self.name = name
         self.solvers = solvers
         self.settings = settings
         self.output_folder = output_folder
@@ -38,7 +48,7 @@ class SuitesparseLassoRunner(object):
 
         The results are stored as
 
-            ./results/{self.output_folder}/{solver}/results.csv
+            ./results/{self.output_folder}/{solver}/{class}/results.csv
 
         using a pandas table with fields
             - 'name': problem name
@@ -52,7 +62,7 @@ class SuitesparseLassoRunner(object):
             - 'N': nnz dimension (nnz(P) + nnz(A))
         '''
 
-        print("Solving Suitesparse Lasso problems")
+        print("Solving Suitesparse %s problems" % self.name)
         print("----------------------------------")
 
         if parallel:
@@ -67,13 +77,14 @@ class SuitesparseLassoRunner(object):
 
             # Solution directory
             path = os.path.join('.', 'results', self.output_folder,
-                                solver)
+                                solver,
+                                self.name)
 
             # Create directory for the results
             make_sure_path_exists(path)
 
             # Get solver file name
-            results_file_name = os.path.join(path, 'results.csv')
+            results_file_name = os.path.join(path, 'full.csv')
 
             # Check if file name already exists
             if not os.path.isfile(results_file_name):
@@ -110,7 +121,7 @@ class SuitesparseLassoRunner(object):
                              problem,
                              solver, settings):
         '''
-        Solve Suitesparse Lasso 'problem' with 'solver'
+        Solve Suitesparse 'problem' with 'solver'
 
         Args:
             dimension: problem leading dimension
@@ -122,7 +133,7 @@ class SuitesparseLassoRunner(object):
         # Create example instance
         full_name = os.path.join(".", "problem_classes",
                                  PROBLEMS_FOLDER, problem)
-        instance = SuitesparseLasso(full_name)
+        instance = EXAMPLES_MAP[self.name](full_name)
 
         print(" - Solving %s with solver %s" % (problem, solver))
 
@@ -136,6 +147,7 @@ class SuitesparseLassoRunner(object):
         N = P.nnz + A.nnz
 
         solution_dict = {'name': [problem],
+                         'type': [self.name],
                          'solver': [solver],
                          'status': [results.status],
                          'run_time': [results.run_time],
