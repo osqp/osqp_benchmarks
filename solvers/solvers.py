@@ -69,22 +69,22 @@ settings = {
     GUROBI: {'TimeLimit': time_limit,
              'FeasibilityTol': eps_low,
              'OptimalityTol': eps_low,
-             'BarConvTol': eps_low},
+             'BarConvTol': 1e-2 * eps_low},
     GUROBI_high: {'TimeLimit': time_limit,
                   'FeasibilityTol': eps_high,
                   'OptimalityTol': eps_high,
-                  'BarConvTol': eps_high},
+                  'BarConvTol': 1e-2 * eps_high},
     MOSEK: {'MSK_DPAR_OPTIMIZER_MAX_TIME': time_limit,
             'MSK_DPAR_INTPNT_CO_TOL_PFEAS': eps_low,   # Primal feasibility tolerance
             'MSK_DPAR_INTPNT_CO_TOL_DFEAS': eps_low,   # Dual feasibility tolerance
-            'MSK_DPAR_INTPNT_CO_TOL_REL_GAP': eps_low,  # Complementary slackness
-            'MSK_DPAR_INTPNT_CO_TOL_MU_RED': eps_low,  # Relative complementary slackness tolerance
+            'MSK_DPAR_INTPNT_CO_TOL_REL_GAP': 1e-2 * eps_low,  # Complementary slackness
+            'MSK_DPAR_INTPNT_CO_TOL_MU_RED': 1e-2 * eps_low,  # Relative complementary slackness tolerance
            },
     MOSEK_high: {'MSK_DPAR_OPTIMIZER_MAX_TIME': time_limit,
                  'MSK_DPAR_INTPNT_CO_TOL_PFEAS': eps_high,   # Primal feasibility tolerance
                  'MSK_DPAR_INTPNT_CO_TOL_DFEAS': eps_high,   # Dual feasibility tolerance
-                 'MSK_DPAR_INTPNT_CO_TOL_REL_GAP': eps_high,  # Complementary slackness
-                 'MSK_DPAR_INTPNT_CO_TOL_MU_RED': eps_high,  # Relative complementary slackness tolerance
+                 'MSK_DPAR_INTPNT_CO_TOL_REL_GAP': 1e-2 * eps_high,  # Complementary slackness
+                 'MSK_DPAR_INTPNT_CO_TOL_MU_RED': 1e-2 * eps_high,  # Relative complementary slackness tolerance
                 },
     ECOS: {'abstol': eps_low,
            'reltol': eps_low},
