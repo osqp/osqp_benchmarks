@@ -9,7 +9,6 @@ This code tests the solvers:
 '''
 from maros_meszaros_problems.maros_meszaros_problem import MarosMeszarosRunner
 import solvers.solvers as s
-from utils.general import plot_performance_profiles
 from utils.benchmark import compute_stats_info
 import os
 import argparse

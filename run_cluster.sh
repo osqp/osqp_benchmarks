@@ -7,8 +7,4 @@
 #SBATCH --mail-type=END,FAIL
 #SBATCH --mail-user=bartolomeo.stellato@gmail.com
 
-# Activate environment
-source activate osqp
-
-# Run script
 HDF5_USE_FILE_LOCKING=FALSE python -u $1 ${@:2}

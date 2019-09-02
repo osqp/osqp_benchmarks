@@ -35,6 +35,7 @@ SOLVER_MAP = {OSQP: OSQPSolver,
 time_limit = 1000. # Seconds
 eps_low = 1e-03
 eps_high = 1e-05
+#  slack_const_ip = 1e-03
 
 # Solver settings
 settings = {
@@ -69,22 +70,24 @@ settings = {
     GUROBI: {'TimeLimit': time_limit,
              'FeasibilityTol': eps_low,
              'OptimalityTol': eps_low,
-             'BarConvTol': 1e-2 * eps_low},
+             #  'BarConvTol': slack_const_ip * eps_low
+             },
     GUROBI_high: {'TimeLimit': time_limit,
                   'FeasibilityTol': eps_high,
                   'OptimalityTol': eps_high,
-                  'BarConvTol': 1e-2 * eps_high},
+                  #  'BarConvTol': slack_const_ip * eps_high
+                  },
     MOSEK: {'MSK_DPAR_OPTIMIZER_MAX_TIME': time_limit,
             'MSK_DPAR_INTPNT_CO_TOL_PFEAS': eps_low,   # Primal feasibility tolerance
             'MSK_DPAR_INTPNT_CO_TOL_DFEAS': eps_low,   # Dual feasibility tolerance
-            'MSK_DPAR_INTPNT_CO_TOL_REL_GAP': 1e-2 * eps_low,  # Complementary slackness
-            'MSK_DPAR_INTPNT_CO_TOL_MU_RED': 1e-2 * eps_low,  # Relative complementary slackness tolerance
+            #  'MSK_DPAR_INTPNT_CO_TOL_REL_GAP': slack_const_ip * eps_low,  # Complementary slackness
+            #  'MSK_DPAR_INTPNT_CO_TOL_MU_RED': slack_const_ip * eps_low,  # Relative complementary slackness tolerance
            },
     MOSEK_high: {'MSK_DPAR_OPTIMIZER_MAX_TIME': time_limit,
                  'MSK_DPAR_INTPNT_CO_TOL_PFEAS': eps_high,   # Primal feasibility tolerance
                  'MSK_DPAR_INTPNT_CO_TOL_DFEAS': eps_high,   # Dual feasibility tolerance
-                 'MSK_DPAR_INTPNT_CO_TOL_REL_GAP': 1e-2 * eps_high,  # Complementary slackness
-                 'MSK_DPAR_INTPNT_CO_TOL_MU_RED': 1e-2 * eps_high,  # Relative complementary slackness tolerance
+                 #  'MSK_DPAR_INTPNT_CO_TOL_REL_GAP': slack_const_ip * eps_high,  # Complementary slackness
+                 #  'MSK_DPAR_INTPNT_CO_TOL_MU_RED': slack_const_ip * eps_high,  # Relative complementary slackness tolerance
                 },
     ECOS: {'abstol': eps_low,
            'reltol': eps_low},
