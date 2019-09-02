@@ -11,6 +11,12 @@ These are the scripts to compare the following Quadratic Program (QP) solvers
 The detailed description of these tests is available in [this paper](https://arxiv.org/pdf/1711.08013.pdf).
 To run these scripts you need `pandas` and `cvxpy` installed.
 
+All the scripts come with options:
+- `--parallel` for parallel execution across instances
+- `--verbose` for verbose solvers output (they  can be slower than necessary while printing)
+- `--high_accuracy` for high accuracy solver settings + optimality checks
+
+
 ## Benchmark problems
 The problems are all randomly generated as described in the OSQP paper.
 They produce a benchmark library of `1400` problems with nonzeros ranging from `100` to `10'000'000`.
