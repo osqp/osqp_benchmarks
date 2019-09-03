@@ -75,8 +75,9 @@ class QPLIB(object):
 
             # Replace the order of rows and columns since QPLIB stores P as a lower triangular matrix
             P = spa.csc_matrix((P_df[2].values, (P_df[1].values-1, P_df[0].values-1)), shape=(n, n))
+            P = (P + spa.triu(P, 1).T).tocsc()
         else:
-            P = None
+            P = spa.csc_matrix((n, n))
 
         # Default value of q
         head += nnz_Ptriu
