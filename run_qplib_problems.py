@@ -51,7 +51,7 @@ qplib_runner = QPLIBRunner(solvers,
                            OUTPUT_FOLDER)
 
 # DEBUG only: Choose only 2 problems
-#  qplib_runner.problems = ["8616"] # , "10038"]
+qplib_runner.problems = ["9008"] # , "10038"]
 
 qplib_runner.solve(parallel=parallel, cores=12)
 

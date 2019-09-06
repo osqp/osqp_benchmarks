@@ -120,7 +120,12 @@ def compute_performance_profiles(solvers, problems_type):
     # plt.show(block=False)
 
 def geom_mean(t, shift=10.):
-    return np.power(np.prod(t + shift), 1/len(t)) - shift
+    """Compute the shifted geometric mean using formula from
+    http://plato.asu.edu/ftp/shgeom.html
+
+    NB. Use logarithms to avoid numeric overflows
+    """
+    return np.exp(np.sum(np.log(np.maximum(1, t + shift))/len(t))) - shift
 
 
 def compute_shifted_geometric_means(solvers, problems_type):
@@ -137,7 +142,8 @@ def compute_shifted_geometric_means(solvers, problems_type):
         # Get total number of problems
         n_problems = len(df)
 
-        t[solver] = df['run_time'].values
+        # NB. Normalize to avoid overflow. They get normalized back anyway.
+        t[solver] = df['run_time'].values * 1e-03
         status[solver] = df['status'].values
 
         # Set maximum time for solvers that did not succeed

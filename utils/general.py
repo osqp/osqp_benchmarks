@@ -1,5 +1,6 @@
 import numpy as np
 import numpy.linalg as la
+import solvers.solvers as s
 import errno
 import os
 
@@ -77,11 +78,11 @@ def is_qp_solution_optimal(qp_problem, x, y, high_accuracy=False):
     primal-dual solution (x, y) and the tolerance eps
     '''
     if high_accuracy:
-        eps_abs = 1e-05
-        eps_rel = 1e-05
+        eps_abs = s.eps_high
+        eps_rel = s.eps_high
     else:
-        eps_abs=1e-03
-        eps_rel=1e-03
+        eps_abs=s.eps_low
+        eps_rel=s.eps_low
 
     # Get problem matrices
     P = qp_problem['P']
@@ -113,24 +114,25 @@ def is_qp_solution_optimal(qp_problem, x, y, high_accuracy=False):
               (la.norm(dua_res, np.inf), eps_dua))
         return False
 
-    # Check complementary slackness
-    y_plus = np.maximum(y, 0)
-    y_minus = np.minimum(y, 0)
+    # Check complementary slackness (REMOVED, not compatible with IP methods)
+    #  y_plus = np.maximum(y, 0)
+    #  y_minus = np.minimum(y, 0)
+    #
+    #  eps_comp = eps_abs + eps_rel * np.max([la.norm(Ax, np.inf)])
+    #
+    #  comp_res_u = np.minimum(y_plus, np.abs(u - Ax))
+    #  comp_res_l = np.minimum(-y_minus, np.abs(Ax - l))
+    #
+    #  if la.norm(comp_res_l, np.inf) > eps_comp:
+    #      print("Error in complementary slackness residual l: %.4e > %.4e" %
+    #            (la.norm(comp_res_l, np.inf), eps_comp))
+    #      return False
+    #
+    #  if la.norm(comp_res_u, np.inf) > eps_comp:
+    #      print("Error in complementary slackness residual u: %.4e > %.4e" %
+    #            (la.norm(comp_res_u, np.inf), eps_comp))
+    #      return False
 
-    eps_comp = eps_abs + eps_rel * np.max([la.norm(Ax, np.inf)])
-
-    comp_res_u = np.minimum(y_plus, np.abs(u - Ax))
-    comp_res_l = np.minimum(-y_minus, np.abs(Ax - l))
-
-    if la.norm(comp_res_l, np.inf) > eps_comp:
-        print("Error in complementary slackness residual l: %.4e > %.4e" %
-              (la.norm(comp_res_l, np.inf), eps_comp))
-        return False
-
-    if la.norm(comp_res_u, np.inf) > eps_comp:
-        print("Error in complementary slackness residual u: %.4e > %.4e" %
-              (la.norm(comp_res_u, np.inf), eps_comp))
-        return False
     # If we arrived until here, the solution is optimal
     return True
 

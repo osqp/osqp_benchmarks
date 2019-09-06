@@ -92,7 +92,8 @@ class Example(object):
 
                 if not os.path.isfile(n_file_name):
 
-                    if parallel:
+                    if parallel and solver not in ['ECOS', 'ECOS_high', 'qpOASES']:
+                        # NB. ECOS and qpOASES crahs if the problem sizes are too large
                         instances_list = list(range(self.n_instances))
                         n_results = pool.starmap(self.solve_single_example,
                                                  zip(repeat(n),
