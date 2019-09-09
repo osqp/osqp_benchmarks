@@ -163,7 +163,7 @@ def compute_shifted_geometric_means(solvers, problems_type):
     g_mean_file = os.path.join('.', 'results',
                                problems_type,
                                'geom_mean.csv')
-    df_g_mean.to_csv(g_mean_file, header=False, index=True)
+    df_g_mean.to_frame().transpose().to_csv(g_mean_file, index=False)
 
 
     # r = {}  # Dictionary of relative times for each solver/problem
@@ -224,7 +224,7 @@ def compute_failure_rates(solvers, problems_type):
 
     # Write csv file
     df_failure_rates = pd.Series(failure_rates)
-    df_failure_rates.to_csv(failure_rates_file, header=False, index=True)
+    df_failure_rates.to_frame().transpose().to_csv(failure_rates_file, index=False)
 
 
 def compute_polish_statistics(problems_type, high_accuracy=False):
@@ -262,7 +262,7 @@ def compute_polish_statistics(problems_type, high_accuracy=False):
                          'percentage_of_success': (polish_success * 100)}
 
     df_polish = pd.Series(polish_statistics)
-    df_polish.to_csv(polish_file, header=False, index=True)
+    df_polish.to_frame().transpose().to_csv(polish_file, index=False)
 
 
 def compute_ratio_setup_solve(problems_type, high_accuracy=False):
@@ -292,7 +292,7 @@ def compute_ratio_setup_solve(problems_type, high_accuracy=False):
                    'median_ratio': np.median(ratios)}
 
     df_ratio = pd.Series(ratio_stats)
-    df_ratio.to_csv(ratio_file, header=False, index=True)
+    df_ratio.to_frame().transpose().to_csv(ratio_file, index=False)
 
 
 def compute_stats_info(solvers, benchmark_type,

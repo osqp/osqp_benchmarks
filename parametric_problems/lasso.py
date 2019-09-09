@@ -4,6 +4,7 @@ Solve Lasso problem as parametric QP by updating iteratively lambda
 import numpy as np
 import pandas as pd
 import os
+from solvers.solvers import SOLVER_MAP  # AVOID CIRCULAR DEPENDENCY
 from problem_classes.lasso import LassoExample
 from utils.general import make_sure_path_exists
 # import osqppurepy as osqp
@@ -131,7 +132,7 @@ class LassoParametric(object):
 
                 # Solve problem
                 r = m.solve()
-                
+
                 # DEBUG
                 #  print("Lambda = %.4e,\t niter = %d" % (lambda_val, r.info.iter))
 
