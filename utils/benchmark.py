@@ -220,7 +220,7 @@ def compute_failure_rates(solvers, problems_type):
         failed_statuses = np.logical_and(*[df['status'].values != s
                                            for s in statuses.SOLUTION_PRESENT])
         n_failed_problems = np.sum(failed_statuses)
-        failure_rates[solver] = n_failed_problems / n_problems
+        failure_rates[solver] = 100 * (n_failed_problems / n_problems)
 
     # Write csv file
     df_failure_rates = pd.Series(failure_rates)
@@ -252,13 +252,14 @@ def compute_polish_statistics(problems_type, high_accuracy=False):
     # Compute time increase
     osqp_time = df_osqp['run_time'].values
     osqp_polish_time = df_osqp_polish['run_time'].values
-    time_increase = osqp_polish_time / osqp_time
+    time_increase = 100 * (osqp_polish_time / osqp_time - 1.)
 
     polish_success = np.sum(df_osqp_polish['status_polish'] == 1) \
         / n_problems
 
     # Print results
-    polish_statistics = {'median_time_increase': np.median(time_increase),
+    polish_statistics = {'mean_time_increase': np.mean(time_increase),
+                         'median_time_increase': np.median(time_increase),
                          'percentage_of_success': (polish_success * 100)}
 
     df_polish = pd.Series(polish_statistics)
@@ -289,7 +290,8 @@ def compute_ratio_setup_solve(problems_type, high_accuracy=False):
 
     # Print results
     ratio_stats = {'mean_ratio': np.mean(ratios),
-                   'median_ratio': np.median(ratios)}
+                   'mean_ratio_perc': 100 * np.mean(ratios),
+                   }
 
     df_ratio = pd.Series(ratio_stats)
     df_ratio.to_frame().transpose().to_csv(ratio_file, index=False)

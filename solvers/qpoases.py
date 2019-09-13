@@ -41,6 +41,17 @@ class qpOASESSolver(object):
         p = example.qp_problem
         n, m = p['n'], p['m']
 
+        # Get number of nonzeros to check if problem is too big
+        N = 0
+        if p['P'] is not None:
+            N += p['P'].nnz
+        if p['A'] is not None:
+            N += p['A'].nnz
+
+        if N > 250000:   # Too large for qpOASES anyway
+            return Results(s.MAX_ITER_REACHED, None, None, None,
+                           1000.0, 1000)
+
         if p['P'] is not None:
             P = np.ascontiguousarray(p['P'].todense())
 
