@@ -48,7 +48,9 @@ class qpOASESSolver(object):
         if p['A'] is not None:
             N += p['A'].nnz
 
-        if N > 250000:   # Too large for qpOASES anyway
+
+        # Too large for qpOASES crashing the server (it reaches anyway the time-limit way before!)
+        if example.name == 'Huber' and N > 250000:
             return Results(s.MAX_ITER_REACHED, None, None, None,
                            1000.0, 1000)
 
