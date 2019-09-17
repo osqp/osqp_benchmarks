@@ -139,6 +139,12 @@ def compute_shifted_geometric_means(solvers, problems_type):
     status = {}
     g_mean = {}
 
+    # Remove OSQP polish solver
+    solvers = solvers.copy()
+    for s in solvers:
+        if "polish" in s:
+            solvers.remove(s)
+
     # Get time and status
     for solver in solvers:
         path = os.path.join('.', 'results', problems_type,
@@ -213,6 +219,12 @@ def compute_failure_rates(solvers, problems_type):
     Compute and show failure rates
     """
     failure_rates = {}
+
+    # Remove OSQP polish solver
+    solvers = solvers.copy()
+    for s in solvers:
+        if "polish" in s:
+            solvers.remove(s)
 
     # Check if results file already exists
     failure_rates_file = os.path.join(".", "results", problems_type, "failure_rates.csv")
