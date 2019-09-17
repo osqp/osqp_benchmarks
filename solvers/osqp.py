@@ -70,5 +70,6 @@ class OSQPSolver(object):
         return_results.setup_time = results.info.setup_time
         return_results.solve_time = results.info.solve_time
         return_results.update_time = results.info.update_time
+        return_results.rho_updates = results.info.rho_updates
 
         return return_results

@@ -171,6 +171,7 @@ class QPLIBRunner(object):
             solution_dict['setup_time'] = results.setup_time
             solution_dict['solve_time'] = results.solve_time
             solution_dict['update_time'] = results.update_time
+            solution_dict['rho_updates'] = results.rho_updates
 
         print(" - Solved %s with solver %s" % (problem, solver))
 

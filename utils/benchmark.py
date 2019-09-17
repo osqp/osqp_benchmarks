@@ -303,6 +303,35 @@ def compute_ratio_setup_solve(problems_type, high_accuracy=False):
     df_ratio.to_frame().transpose().to_csv(ratio_file, index=False)
 
 
+def compute_rho_updates(problems_type, high_accuracy=False):
+    name_high = "_high" if high_accuracy else ""
+
+    # Check if results file already exists
+    rho_updates_file = os.path.join(".", "results", problems_type,
+            "rho_updates.csv")
+    # Path where solver results are stored
+    path_osqp = os.path.join('.', 'results', problems_type,
+                             "OSQP" + name_high, 'results.csv')
+    # Load data frames
+    df_osqp = pd.read_csv(path_osqp)
+
+    # Take only problems where osqp has success
+    successful_problems = df_osqp['status'] == statuses.OPTIMAL
+    df_osqp = df_osqp.loc[successful_problems]
+    n_problems = len(df_osqp)
+    n_updates = df_osqp['rho_updates'].values
+
+    # Print results
+    rho_updates_stats = {'mean_rho_updates': np.mean(n_updates),
+            'median_rho_updates': np.median(n_updates),
+            'max_rho_updates': np.max(n_updates),
+            'std_rho_updates': np.std(n_updates),
+            }
+
+    df_ratio = pd.Series(rho_updates_stats)
+    df_ratio.to_frame().transpose().to_csv(rho_updates_file, index=False)
+
+
 def compute_stats_info(solvers, benchmark_type,
                        problems=None,
                        high_accuracy=False,
@@ -326,6 +355,7 @@ def compute_stats_info(solvers, benchmark_type,
     if any(s.startswith('OSQP') for s in solvers):
         compute_polish_statistics(benchmark_type, high_accuracy=high_accuracy)
         compute_ratio_setup_solve(benchmark_type, high_accuracy=high_accuracy)
+        compute_rho_updates(benchmark_type, high_accuracy=high_accuracy)
 
     # Plot performance profiles
     if performance_profiles:
