@@ -11,10 +11,11 @@ These are the scripts to compare the following Quadratic Program (QP) solvers
 The detailed description of these tests is available in [this paper](https://arxiv.org/pdf/1711.08013.pdf).
 To run these scripts you need `pandas` and `cvxpy` installed.
 
-All the scripts (apart from the parametric examples) come with options:
+All the scripts (apart from the parametric examples) come with options (default to `False`)
+
 - `--parallel` for parallel execution across instances
 - `--verbose` for verbose solvers output (they  can be slower than necessary while printing)
-- `--high_accuracy` for high accuracy solver settings + optimality checks
+- `--high_accuracy` for high accuracy `eps=1e-05` solver settings + optimality checks (default is `eps=1e-03`)
 
 
 ## Benchmark problems
