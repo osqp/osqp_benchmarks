@@ -143,7 +143,7 @@ def compute_shifted_geometric_means(solvers, problems_type):
         n_problems = len(df)
 
         # NB. Normalize to avoid overflow. They get normalized back anyway.
-        t[solver] = df['run_time'].values * 1e-03
+        t[solver] = df['run_time'].values
         status[solver] = df['status'].values
 
         # Set maximum time for solvers that did not succeed
