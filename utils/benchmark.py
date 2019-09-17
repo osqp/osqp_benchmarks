@@ -15,6 +15,12 @@ def plot_performance_profiles(problems, solvers):
     """
     Plot performance profiles in matplotlib for specified problems and solvers
     """
+    # Remove OSQP polish solver
+    solvers = solvers.copy()
+    for s in solvers:
+        if "polish" in s:
+            solvers.remove(s)
+
     df = pd.read_csv('./results/%s/performance_profiles.csv' % problems)
     plt.figure(0)
     for solver in solvers:
