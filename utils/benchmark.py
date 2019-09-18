@@ -278,6 +278,8 @@ def compute_polish_statistics(problems_type, high_accuracy=False):
     # Print results
     polish_statistics = {'mean_time_increase': np.mean(time_increase),
                          'median_time_increase': np.median(time_increase),
+                         'max_time_increase': np.max(time_increase),
+                         'std_time_increase': np.std(time_increase),
                          'percentage_of_success': (polish_success * 100)}
 
     df_polish = pd.Series(polish_statistics)
@@ -304,11 +306,13 @@ def compute_ratio_setup_solve(problems_type, high_accuracy=False):
     # Compute time increase
     osqp_setup_time = df_osqp['setup_time'].values
     osqp_solve_time = df_osqp['solve_time'].values
-    ratios = np.divide(osqp_setup_time, osqp_solve_time)
+    ratios = 100 * np.divide(osqp_setup_time, osqp_solve_time)
 
     # Print results
     ratio_stats = {'mean_ratio': np.mean(ratios),
-                   'mean_ratio_perc': 100 * np.mean(ratios),
+                   'median_ratio': np.median(ratios),
+                   'std_ratio': np.std(ratios),
+                   'max_ratio': np.max(ratios)
                    }
 
     df_ratio = pd.Series(ratio_stats)
