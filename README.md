@@ -42,7 +42,7 @@ The resulting [shifted geometric means](http://plato.asu.edu/ftp/shgeom.html) ar
 
 | OSQP | GUROBI            | MOSEK           | ECOS               | qpOASES            |
 | ---- | ----------------- | --------------- | ------------------ | ------------------ |
-| 1.0  | 4.284628797377856 | 2.5222928639855 | 28.846675051894692 | 149.93199918447826 |
+| 1.0  | 4.28              | 2.52            | 28.85              | 149.93             |
 
 
 ## Maros Meszaros problems
@@ -59,7 +59,7 @@ The resulting [shifted geometric means](http://plato.asu.edu/ftp/shgeom.html) ar
 
 | OSQP               | GUROBI | MOSEK             |
 | ------------------ | ------ | ----------------- |
-| 1.4644901303505107 | 1.0    | 6.121401985319734 |
+| 1.46               | 1.0    | 6.12              |
 
 
 ## SuiteSparse Matrix Lasso and Huber Fitting problems
@@ -75,7 +75,7 @@ The resulting [shifted geometric means](http://plato.asu.edu/ftp/shgeom.html) ar
 
 | OSQP | GUROBI             | MOSEK              |
 | ---- | ------------------ | ------------------ |
-| 1.0  | 1.6298594688779335 | 1.7453455598793246 |
+| 1.0  | 1.63               | 1.74               |
 
 ## Parametric problems
 These tests apply only to the OSQP solver with and without warm-starting for three parametric examples of
