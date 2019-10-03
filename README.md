@@ -28,6 +28,7 @@ Problem instances include
 -   Portfolio
 -   Lasso
 -   Huber fitting
+-   Support vector machines (SVM)
 -   Constrained optimal control
 
 We generate the problems using the scripts in the `problem_classes` folder.
