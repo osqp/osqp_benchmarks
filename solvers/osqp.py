@@ -37,8 +37,10 @@ class OSQPSolver(object):
         settings = self._settings.copy()
         high_accuracy = settings.pop('high_accuracy', None)
 
+        algebra = self.settings.get('algebra', 'builtin')
         # Setup OSQP
-        m = osqp.OSQP()
+        m = osqp.OSQP(algebra=algebra)
+
         m.setup(problem['P'], problem['q'], problem['A'], problem['l'],
                 problem['u'],
                 **settings)

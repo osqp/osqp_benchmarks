@@ -12,6 +12,9 @@ OSQP = 'OSQP'
 OSQP_high = OSQP + '_high'
 OSQP_polish = OSQP + '_polish'
 OSQP_polish_high = OSQP_polish + '_high'
+OSQP_MKL_INDIRECT = 'OSQP_MKL_INDIRECT'
+OSQP_MKL_DIRECT = 'OSQP_MKL_DIRECT'
+OSQP_CUDA = 'OSQP_CUDA'
 MOSEK = 'MOSEK'
 MOSEK_high = MOSEK + "_high"
 qpOASES = 'qpOASES'
@@ -23,6 +26,9 @@ SOLVER_MAP = {OSQP: OSQPSolver,
               OSQP_high: OSQPSolver,
               OSQP_polish: OSQPSolver,
               OSQP_polish_high: OSQPSolver,
+              OSQP_MKL_INDIRECT: OSQPSolver,
+              OSQP_MKL_DIRECT: OSQPSolver,
+			  OSQP_CUDA: OSQPSolver,
               GUROBI: GUROBISolver,
               GUROBI_high: GUROBISolver,
               MOSEK: MOSEKSolver,
@@ -65,6 +71,32 @@ settings = {
                        'eps_prim_inf': 1e-15,  # Disable infeas check
                        'eps_dual_inf': 1e-15
     },
+    OSQP_MKL_INDIRECT: {'eps_abs': eps_low,
+           'eps_rel': eps_low,
+           'polish': False,
+           'max_iter': int(1e09),
+           'eps_prim_inf': 1e-15,  # Disable infeas check
+           'eps_dual_inf': 1e-15,
+           'algebra': 'mkl',
+           'solver_type': 'indirect'
+           },
+    OSQP_MKL_DIRECT: {'eps_abs': eps_low,
+                        'eps_rel': eps_low,
+                        'polish': False,
+                        'max_iter': int(1e09),
+                        'eps_prim_inf': 1e-15,  # Disable infeas check
+                        'eps_dual_inf': 1e-15,
+                        'algebra': 'mkl',
+                        'solver_type': 'direct'
+                        },
+    OSQP_CUDA: {'eps_abs': eps_low,
+                        'eps_rel': eps_low,
+                        'polish': False,
+                        'max_iter': int(1e09),
+                        'eps_prim_inf': 1e-15,  # Disable infeas check
+                        'eps_dual_inf': 1e-15,
+                        'algebra': 'cuda'
+                        },						
     GUROBI: {'TimeLimit': time_limit,
              'FeasibilityTol': eps_low,
              'OptimalityTol': eps_low,

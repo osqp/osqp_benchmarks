@@ -43,7 +43,7 @@ if high_accuracy:
     for key in s.settings:
         s.settings[key]['high_accuracy'] = True
 else:
-    solvers = [s.OSQP, s.OSQP_polish, s.GUROBI, s.MOSEK, s.ECOS, s.qpOASES]
+    solvers = [s.OSQP, s.OSQP_polish, s.OSQP_MKL_DIRECT, s.OSQP_MKL_INDIRECT, s.OSQP_CUDA, s.GUROBI, s.MOSEK, s.ECOS, s.qpOASES]
     OUTPUT_FOLDER = 'benchmark_problems'
 
 

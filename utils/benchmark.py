@@ -368,10 +368,11 @@ def compute_stats_info(solvers, benchmark_type,
     compute_shifted_geometric_means(solvers, benchmark_type)
 
     # Compute polish statistics
-    if any(s.startswith('OSQP') for s in solvers):
-        compute_polish_statistics(benchmark_type, high_accuracy=high_accuracy)
-        compute_ratio_setup_solve(benchmark_type, high_accuracy=high_accuracy)
-        compute_rho_updates(benchmark_type, high_accuracy=high_accuracy)
+	# TODO: disabled in develop-1.0 since not all OSQP_* solvers support these options
+    # if any(s.startswith('OSQP') for s in solvers):
+    #     compute_polish_statistics(benchmark_type, high_accuracy=high_accuracy)
+    #     compute_ratio_setup_solve(benchmark_type, high_accuracy=high_accuracy)
+    #     compute_rho_updates(benchmark_type, high_accuracy=high_accuracy)
 
     # Plot performance profiles
     if performance_profiles:
