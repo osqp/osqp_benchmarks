@@ -37,6 +37,9 @@ class OSQPSolver(object):
         settings = self._settings.copy()
         high_accuracy = settings.pop('high_accuracy', None)
 
+        settings['adaptive_rho_interval'] = 0
+        settings['adaptive_rho_tolerance'] = 5.0
+
         algebra = self.settings.get('algebra', 'builtin')
         # Setup OSQP
         m = osqp.OSQP(algebra=algebra)
