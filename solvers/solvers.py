@@ -3,6 +3,7 @@ from solvers.gurobi import GUROBISolver
 from solvers.mosek import MOSEKSolver
 from solvers.osqp import OSQPSolver
 from solvers.qpoases import qpOASESSolver
+from solvers.clarabel import ClarabelSolver
 
 ECOS = 'ECOS'
 ECOS_high = ECOS + "_high"
@@ -18,6 +19,8 @@ OSQP_CUDA = 'OSQP_CUDA'
 MOSEK = 'MOSEK'
 MOSEK_high = MOSEK + "_high"
 qpOASES = 'qpOASES'
+CLARABEL = 'Clarabel'
+CLARABEL_high = CLARABEL + "_high"
 
 # solvers = [ECOSSolver, GUROBISolver, MOSEKSolver, OSQPSolver]
 # SOLVER_MAP = {solver.name(): solver for solver in solvers}
@@ -35,7 +38,9 @@ SOLVER_MAP = {OSQP: OSQPSolver,
               MOSEK_high: MOSEKSolver,
               ECOS: ECOSSolver,
               ECOS_high: ECOSSolver,
-              qpOASES: qpOASESSolver}
+              qpOASES: qpOASESSolver,
+              CLARABEL: ClarabelSolver,
+              CLARABEL_high: ClarabelSolver}
 
 time_limit = 1000. # Seconds
 eps_low = 1e-03
@@ -117,7 +122,11 @@ settings = {
            'reltol': eps_low},
     ECOS_high: {'abstol': eps_high,
                 'reltol': eps_high},
-    qpOASES: {}
+    qpOASES: {},
+    CLARABEL: {'abstol': eps_low,
+               'reltol': eps_low},
+    CLARABEL_high: {'abstol': eps_high,
+                    'reltol': eps_high}
 }
 
 for key in settings:
