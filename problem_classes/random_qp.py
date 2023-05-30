@@ -59,7 +59,7 @@ class RandomQPExample(object):
         Generate QP problem
         '''
         x_var = cvxpy.Variable(self.n)
-        objective = .5 * cvxpy.quad_form(x_var, self.P) + self.q * x_var
+        objective = .5 * cvxpy.quad_form(x_var, cvxpy.psd_wrap(self.P)) + self.q * x_var
         constraints = [self.A * x_var <= self.u, self.A * x_var >= self.l]
         problem = cvxpy.Problem(cvxpy.Minimize(objective), constraints)
 

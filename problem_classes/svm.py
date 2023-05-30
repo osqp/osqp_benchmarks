@@ -97,7 +97,7 @@ class SVMExample(object):
         x = cvxpy.Variable(n)
         t = cvxpy.Variable(m)
 
-        objective = cvxpy.Minimize(.5 * cvxpy.quad_form(x, spa.eye(n))
+        objective = cvxpy.Minimize(.5 * cvxpy.quad_form(x, cvxpy.psd_wrap(spa.eye(n)))
                                    + .5 * self.gamma * np.ones(m) * t)
         constraints = [t >= spa.diags(self.b_svm).dot(self.A_svm) * x + 1,
                        t >= 0]

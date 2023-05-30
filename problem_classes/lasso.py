@@ -81,7 +81,7 @@ class LassoExample(object):
         lambda_cvxpy = cvxpy.Parameter()
         lambda_cvxpy.value = self.lambda_param
 
-        objective = cvxpy.Minimize(cvxpy.quad_form(y, spa.eye(self.m))
+        objective = cvxpy.Minimize(cvxpy.quad_form(y, cvxpy.psd_wrap(spa.eye(self.m)))
                                    + self.lambda_param * (np.ones(self.n) * t))
         constraints = [y == self.Ad * x - self.bd,
                        -t <= x, x <= t]

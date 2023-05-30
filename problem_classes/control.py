@@ -172,10 +172,10 @@ class ControlExample(object):
         u = cvxpy.Variable((nu, T))
 
         # Objective
-        cost = cvxpy.quad_form(x[:, T], self.QN)  # Terminal cost
+        cost = cvxpy.quad_form(x[:, T], cvxpy.psd_wrap(self.QN))  # Terminal cost
         for i in range(T):
-            cost += cvxpy.quad_form(x[:, i], self.Q)     # State cost
-            cost += cvxpy.quad_form(u[:, i], self.R)     # Inpout cost
+            cost += cvxpy.quad_form(x[:, i], cvxpy.psd_wrap(self.Q))     # State cost
+            cost += cvxpy.quad_form(u[:, i], cvxpy.psd_wrap(self.R))     # Inpout cost
         objective = cvxpy.Minimize(cost)
 
         # Dynamics

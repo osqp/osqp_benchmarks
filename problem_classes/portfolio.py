@@ -101,8 +101,8 @@ class PortfolioExample(object):
         mu = cvxpy.Parameter(self.n)
         mu.value = self.mu
 
-        objective = cvxpy.Minimize(cvxpy.quad_form(x, self.D) +
-                                   cvxpy.quad_form(y, spa.eye(self.k)) +
+        objective = cvxpy.Minimize(cvxpy.quad_form(x, cvxpy.psd_wrap(self.D)) +
+                                   cvxpy.quad_form(y, cvxpy.psd_wrap(spa.eye(self.k))) +
                                    - 1 / self.gamma * (mu.T * x))
         constraints = [np.ones(self.n) * x == 1,
                        self.F.T * x == y,
