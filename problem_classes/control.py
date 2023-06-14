@@ -88,7 +88,8 @@ class ControlExample(object):
         (nx, nu) = self.B.shape
 
         # Objective
-        Px = spa.kron(spa.eye(self.T), self.Q)
+        eye_with_no_cost_for_x0 = spa.diags([int(i != 0) for i in range(self.T)]) # equals diag([0,1,1,1, ... , 1])
+        Px = spa.kron(eye_with_no_cost_for_x0, self.Q)
         Pu = spa.kron(spa.eye(self.T), self.R)
         P = 2. * spa.block_diag([Px, self.QN, Pu]).tocsc()
         q = np.zeros((self.T + 1) * nx + self.T * nu)
