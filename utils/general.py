@@ -88,6 +88,12 @@ def is_qp_solution_optimal(qp_problem, x, y, high_accuracy=False):
     l = qp_problem["l"]
     u = qp_problem["u"]
 
+    # Set infinity values (1e20)
+    l[l > +9e19] = +np.inf
+    u[u > +9e19] = +np.inf
+    l[l < -9e19] = -np.inf
+    u[u < -9e19] = -np.inf
+
     # Check primal feasibility
     Ax = A.dot(x)
     eps_pri = eps_abs + eps_rel * la.norm(Ax, np.inf)
@@ -115,9 +121,20 @@ def is_qp_solution_optimal(qp_problem, x, y, high_accuracy=False):
         return False
 
     # Check duality gap
-    y_plus = np.maximum(y, 0)
-    y_minus = np.minimum(y, 0)
-    supp_func = u.dot(y_plus) + l.dot(y_minus)
+    # Find index of infinity values in u and l
+    u_inf = np.isinf(u)
+    l_inf = np.isinf(l)
+
+    # select non infinity values in u and l and y
+    u_notinf = u[~u_inf]
+    l_notinf = l[~l_inf]
+    y_notinf_u = y[~u_inf]
+    y_notinf_l = y[~l_inf]
+
+    y_plus = np.maximum(y_notinf_u, 0)
+    y_minus = np.minimum(y_notinf_l, 0)
+
+    supp_func = u_notinf.dot(y_plus) + l_notinf.dot(y_minus)
     xPx = x.dot(Px)
     qx = q.dot(x)
     dua_gap = np.abs(xPx + qx + supp_func)
