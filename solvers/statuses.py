@@ -9,5 +9,6 @@ PRIMAL_OR_DUAL_INFEASIBLE = "primal or dual infeasible"
 SOLVER_ERROR = "solver_error"
 MAX_ITER_REACHED = "max_iter_reached"
 TIME_LIMIT = "time_limit"
+ALGEBRA = "builtin"
 
 SOLUTION_PRESENT = [OPTIMAL, OPTIMAL_INACCURATE]

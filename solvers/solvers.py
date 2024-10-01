@@ -1,8 +1,8 @@
-from solvers.ecos import ECOSSolver
+# from solvers.ecos import ECOSSolver
 from solvers.gurobi import GUROBISolver
-from solvers.mosek import MOSEKSolver
+# from solvers.mosek import MOSEKSolver
 from solvers.osqp import OSQPSolver
-from solvers.qpoases import qpOASESSolver
+# from solvers.qpoases import qpOASESSolver
 from solvers.clarabel import ClarabelSolver
 
 ECOS = 'ECOS'
@@ -34,17 +34,17 @@ SOLVER_MAP = {OSQP: OSQPSolver,
 			  OSQP_CUDA: OSQPSolver,
               GUROBI: GUROBISolver,
               GUROBI_high: GUROBISolver,
-              MOSEK: MOSEKSolver,
-              MOSEK_high: MOSEKSolver,
-              ECOS: ECOSSolver,
-              ECOS_high: ECOSSolver,
-              qpOASES: qpOASESSolver,
+              # MOSEK: MOSEKSolver,
+              # MOSEK_high: MOSEKSolver,
+              # ECOS: ECOSSolver,
+              # ECOS_high: ECOSSolver,
+              # qpOASES: qpOASESSolver,
               CLARABEL: ClarabelSolver,
               CLARABEL_high: ClarabelSolver}
 
 time_limit = 1000. # Seconds
 eps_low = 1e-03
-eps_high = 1e-05
+eps_high = 1e-06
 
 # Solver settings
 settings = {
@@ -54,27 +54,47 @@ settings = {
            'max_iter': int(1e09),
            'eps_prim_inf': 1e-15,  # Disable infeas check
            'eps_dual_inf': 1e-15,
+           'check_dualgap': True,
+           'restart_enable': True,
+           'restart_sufficient': 0.3875,
+           'restart_necessary': 0.825,
+           'restart_artificial': 0.5,
     },
     OSQP_high: {'eps_abs': eps_high,
                 'eps_rel': eps_high,
                 'polish': False,
                 'max_iter': int(1e09),
                 'eps_prim_inf': 1e-15,  # Disable infeas check
-                'eps_dual_inf': 1e-15
+                'eps_dual_inf': 1e-15,
+                'check_dualgap': True,
+                'restart_enable': True,
+                'restart_sufficient': 0.3875,
+                'restart_necessary': 0.825,
+                'restart_artificial': 0.5,
     },
     OSQP_polish: {'eps_abs': eps_low,
                   'eps_rel': eps_low,
                   'polish': True,
                   'max_iter': int(1e09),
                   'eps_prim_inf': 1e-15,  # Disable infeas check
-                  'eps_dual_inf': 1e-15
+                  'eps_dual_inf': 1e-15,
+                  'check_dualgap': True,
+                  'restart_enable': True,
+                  'restart_sufficient': 0.3875,
+                  'restart_necessary': 0.825,
+                  'restart_artificial': 0.5,
     },
     OSQP_polish_high: {'eps_abs': eps_high,
                        'eps_rel': eps_high,
                        'polish': True,
                        'max_iter': int(1e09),
                        'eps_prim_inf': 1e-15,  # Disable infeas check
-                       'eps_dual_inf': 1e-15
+                       'eps_dual_inf': 1e-15,
+                       'check_dualgap': True,
+                       'restart_enable': True,
+                       'restart_sufficient': 0.3875,
+                       'restart_necessary': 0.825,
+                       'restart_artificial': 0.5,
     },
     OSQP_MKL_INDIRECT: {'eps_abs': eps_low,
            'eps_rel': eps_low,
@@ -83,7 +103,12 @@ settings = {
            'eps_prim_inf': 1e-15,  # Disable infeas check
            'eps_dual_inf': 1e-15,
            'algebra': 'mkl',
-           'solver_type': 'indirect'
+           'solver_type': 'indirect',
+           'check_dualgap': True,
+           'restart_enable': True,
+           'restart_sufficient': 0.3875,
+           'restart_necessary': 0.825,
+           'restart_artificial': 0.5,
            },
     OSQP_MKL_DIRECT: {'eps_abs': eps_low,
                         'eps_rel': eps_low,
@@ -92,7 +117,12 @@ settings = {
                         'eps_prim_inf': 1e-15,  # Disable infeas check
                         'eps_dual_inf': 1e-15,
                         'algebra': 'mkl',
-                        'solver_type': 'direct'
+                        'solver_type': 'direct',
+                        'check_dualgap': True,
+                        'restart_enable': True,
+                        'restart_sufficient': 0.3875,
+                        'restart_necessary': 0.825,
+                        'restart_artificial': 0.5,
                         },
     OSQP_CUDA: {'eps_abs': eps_low,
                         'eps_rel': eps_low,
@@ -100,7 +130,12 @@ settings = {
                         'max_iter': int(1e09),
                         'eps_prim_inf': 1e-15,  # Disable infeas check
                         'eps_dual_inf': 1e-15,
-                        'algebra': 'cuda'
+                        'algebra': 'cuda',
+                        'check_dualgap': True,
+                        'restart_enable': True,
+                        'restart_sufficient': 0.3875,
+                        'restart_necessary': 0.825,
+                        'restart_artificial': 0.5,
                         },						
     GUROBI: {'TimeLimit': time_limit,
              'FeasibilityTol': eps_low,

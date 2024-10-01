@@ -32,7 +32,7 @@ class MarosMeszarosRunner(object):
             f.endswith('.mat')]
         self.problems = [f[:-4] for f in lst_probs]   # List of problem names
 
-    def solve(self, parallel=True, cores=32):
+    def solve(self, parallel=True, cores=32, codegen=None):
         '''
         Solve problems of type example
 
@@ -60,6 +60,9 @@ class MarosMeszarosRunner(object):
 
         # Iterate over all solvers
         for solver in self.solvers:
+            # Codegen is available only for OSQP
+            if codegen and (not solver.startswith("OSQP")):
+                continue
             settings = self.settings[solver]
 
             #  # Initialize solver results
@@ -71,6 +74,8 @@ class MarosMeszarosRunner(object):
 
             # Create directory for the results
             make_sure_path_exists(path)
+            if codegen:
+                codegen = os.path.join(".", "codegen", self.output_folder, solver)
 
             # Get solver file name
             results_file_name = os.path.join(path, 'results.csv')
@@ -82,13 +87,19 @@ class MarosMeszarosRunner(object):
                     results = pool.starmap(self.solve_single_example,
                                            zip(self.problems,
                                                repeat(solver),
-                                               repeat(settings)))
+                                               repeat(settings), repeat(codegen)))
                 else:
                     results = []
                     for problem in self.problems:
+                        #DEBUG ONLY
+                        if problem not in ["QPTEST", "HS21"]:
+                            continue
                         results.append(self.solve_single_example(problem,
-                                                                 solver,
-                                                                 settings))
+                                                                solver,
+                                                                settings, codegen))
+                if codegen:
+                    return
+                
                 # Create dataframe
                 df = pd.concat(results)
 
@@ -108,7 +119,7 @@ class MarosMeszarosRunner(object):
 
     def solve_single_example(self,
                              problem,
-                             solver, settings):
+                             solver, settings, codegen=None):
         '''
         Solve Maros Meszaro 'problem' with 'solver'
 
@@ -117,8 +128,11 @@ class MarosMeszarosRunner(object):
             instance_number: number of the instance
             solver: solver name
             settings: settings dictionary for the solver
+            codegen: Where to save codegen
 
         '''
+        if codegen:
+            codegen = os.path.join(codegen, problem)
         # Create example instance
         full_name = os.path.join(".", "problem_classes",
                                  PROBLEMS_FOLDER, problem)
@@ -128,7 +142,10 @@ class MarosMeszarosRunner(object):
 
         # Solve problem
         s = SOLVER_MAP[solver](settings)
-        results = s.solve(instance)
+        results = s.solve(instance, codegen) if codegen else s.solve(instance)
+        if codegen:
+            print(f" - Generated codegen for {problem} with solver {solver}.")
+            return
 
         # Create solution as pandas table
         P = instance.qp_problem['P']
@@ -172,6 +189,9 @@ class MarosMeszarosRunner(object):
             solution_dict['solve_time'] = results.solve_time
             solution_dict['update_time'] = results.update_time
             solution_dict['rho_updates'] = results.rho_updates
+            solution_dict['dual_obj_val'] = results.dual_obj_val
+            solution_dict['duality_gap'] = results.duality_gap
+            solution_dict['restarts'] = results.restarts
 
         print(" - Solved %s with solver %s" % (problem, solver))
 

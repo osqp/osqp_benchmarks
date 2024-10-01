@@ -21,23 +21,29 @@ parser.add_argument('--verbose', help='Verbose solvers', default=False,
                     action='store_true')
 parser.add_argument('--parallel', help='Parallel solution', default=False,
                     action='store_true')
+parser.add_argument('--codegen', help='code generation', default=None, action='store_true')
 args = parser.parse_args()
 high_accuracy = args.high_accuracy
 verbose = args.verbose
 parallel = args.parallel
+codegen = args.codegen
 
 print('high_accuracy', high_accuracy)
 print('verbose', verbose)
 print('parallel', parallel)
+print('codegen', codegen)
 
 # Add high accuracy solvers when accurazy
 if high_accuracy:
-    solvers = [s.OSQP_high, s.OSQP_polish_high, s.GUROBI_high, s.MOSEK_high]
+    # solvers = [s.OSQP_high, s.OSQP_polish_high, s.GUROBI_high, s.MOSEK_high]
+    # solvers = [s.OSQP_high, s.OSQP_polish_high, s.GUROBI_high]
+    solvers = [s.OSQP_high]
     OUTPUT_FOLDER = 'maros_meszaros_problems_high_accuracy'
     for key in s.settings:
         s.settings[key]['high_accuracy'] = True
 else:
-    solvers = [s.OSQP, s.OSQP_polish, s.GUROBI, s.MOSEK]
+    # solvers = [s.OSQP, s.OSQP_polish, s.GUROBI, s.MOSEK]
+    solvers = [s.OSQP, s.OSQP_polish, s.GUROBI]
     OUTPUT_FOLDER = 'maros_meszaros_problems'
 
 # Shut up solvers
@@ -53,7 +59,10 @@ maros_meszaros_runner = MarosMeszarosRunner(solvers,
 # DEBUG only: Choose only 2 problems
 # maros_meszaros_runner.problems = ["STADAT1", "BOYD1"]
 
-maros_meszaros_runner.solve(parallel=parallel, cores=12)
+maros_meszaros_runner.solve(parallel=parallel, cores=12, codegen=codegen)
+
+if codegen:
+    exit
 
 # Compute results statistics
 compute_stats_info(solvers, OUTPUT_FOLDER,
