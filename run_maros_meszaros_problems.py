@@ -10,7 +10,7 @@ This code tests the solvers:
 from maros_meszaros_problems.maros_meszaros_problem import MarosMeszarosRunner
 import solvers.solvers as s
 from utils.benchmark import compute_stats_info
-import os
+import os, sys
 import argparse
 
 
@@ -62,7 +62,7 @@ maros_meszaros_runner = MarosMeszarosRunner(solvers,
 maros_meszaros_runner.solve(parallel=parallel, cores=12, codegen=codegen)
 
 if codegen:
-    exit
+    sys.exit()
 
 # Compute results statistics
 compute_stats_info(solvers, OUTPUT_FOLDER,
