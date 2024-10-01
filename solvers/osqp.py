@@ -51,7 +51,7 @@ class OSQPSolver(object):
                 **settings)
         
         if codegen:
-            m.codegen(codegen)
+            m.codegen(codegen, force_rewrite=True)
             return None
 
         # Solve
