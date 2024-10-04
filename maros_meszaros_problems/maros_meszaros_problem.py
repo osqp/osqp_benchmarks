@@ -91,9 +91,9 @@ class MarosMeszarosRunner(object):
                 else:
                     results = []
                     for problem in self.problems:
-                        #DEBUG ONLY
-                        if problem not in ["QPTEST", "HS21"]:
-                            continue
+                        # #DEBUG ONLY
+                        # if problem not in ["QAFIRO", "QPTEST", "HS118", "HS21", "HS268", "HS35"]:
+                        #     continue
                         results.append(self.solve_single_example(problem,
                                                                 solver,
                                                                 settings, codegen))

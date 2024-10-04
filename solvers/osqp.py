@@ -46,6 +46,9 @@ class OSQPSolver(object):
         # Setup OSQP
         m = osqp.OSQP(algebra=algebra)
 
+        if codegen:
+            settings['scaling']=0
+
         m.setup(problem['P'], problem['q'], problem['A'], problem['l'],
                 problem['u'],
                 **settings)
