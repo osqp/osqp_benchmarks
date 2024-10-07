@@ -22,16 +22,33 @@ parser.add_argument('--verbose', help='Verbose solvers', default=False,
 parser.add_argument('--parallel', help='Parallel solution', default=False,
                     action='store_true')
 parser.add_argument('--codegen', help='code generation', default=None, action='store_true')
+parser.add_argument('--restart_sufficient', type=float, default=0.2)
+parser.add_argument('--restart_necessary', type=float, default=0.8)
+parser.add_argument('--restart_artificial', type=float, default=0.36)
+
 args = parser.parse_args()
 high_accuracy = args.high_accuracy
 verbose = args.verbose
 parallel = args.parallel
 codegen = args.codegen
+restart_sufficient = args.restart_sufficient
+restart_necessary = args.restart_necessary
+restart_artificial = args.restart_artificial
 
 print('high_accuracy', high_accuracy)
 print('verbose', verbose)
 print('parallel', parallel)
 print('codegen', codegen)
+print('restart_sufficient', restart_sufficient)
+print('restart_necessary', restart_necessary)
+print('restart_artificial', restart_artificial)
+
+
+#Update restart parameters
+for key in s.settings:
+    s.settings[key]['restart_sufficient'] = restart_sufficient
+    s.settings[key]['restart_necessary'] = restart_necessary
+    s.settings[key]['restart_artificial'] = restart_artificial
 
 # Add high accuracy solvers when accurazy
 if high_accuracy:
