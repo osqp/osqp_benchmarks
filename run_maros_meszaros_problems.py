@@ -25,6 +25,8 @@ parser.add_argument('--codegen', help='code generation', default=None, action='s
 parser.add_argument('--restart_sufficient', type=float, default=0.2)
 parser.add_argument('--restart_necessary', type=float, default=0.8)
 parser.add_argument('--restart_artificial', type=float, default=0.36)
+parser.add_argument('--results_dir', help="Where to save the results (not codegen). If not provided, default will be used.", type=str, default="")
+parser.add_argument('--time_limit', help="Time limit in seconds", type=float)
 
 args = parser.parse_args()
 high_accuracy = args.high_accuracy
@@ -34,6 +36,8 @@ codegen = args.codegen
 restart_sufficient = args.restart_sufficient
 restart_necessary = args.restart_necessary
 restart_artificial = args.restart_artificial
+results_dir = args.results_dir
+time_limit = args.time_limit
 
 print('high_accuracy', high_accuracy)
 print('verbose', verbose)
@@ -42,6 +46,8 @@ print('codegen', codegen)
 print('restart_sufficient', restart_sufficient)
 print('restart_necessary', restart_necessary)
 print('restart_artificial', restart_artificial)
+print('results_dir', results_dir)
+print('time_limit', time_limit)
 
 
 #Update restart parameters
@@ -49,6 +55,7 @@ for key in s.settings:
     s.settings[key]['restart_sufficient'] = restart_sufficient
     s.settings[key]['restart_necessary'] = restart_necessary
     s.settings[key]['restart_artificial'] = restart_artificial
+    s.settings[key]['time_limit'] = time_limit
 
 # Add high accuracy solvers when accurazy
 if high_accuracy:
@@ -60,8 +67,13 @@ if high_accuracy:
         s.settings[key]['high_accuracy'] = True
 else:
     # solvers = [s.OSQP, s.OSQP_polish, s.GUROBI, s.MOSEK]
-    solvers = [s.OSQP, s.OSQP_polish, s.GUROBI]
+    # solvers = [s.OSQP, s.OSQP_polish, s.GUROBI]
+    solvers = [s.OSQP]
     OUTPUT_FOLDER = 'maros_meszaros_problems'
+
+#Change output directory
+if results_dir:
+    OUTPUT_FOLDER = results_dir
 
 # Shut up solvers
 if verbose:

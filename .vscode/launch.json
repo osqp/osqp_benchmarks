@@ -13,7 +13,11 @@
             "args": [
                 "--high_accuracy",
                 "--verbose",
-                "--codegen",
+                "--restart_sufficient", "0.05",
+                "--restart_necessary", "0.9",
+                "--restart_artificial", "0.2",
+                "--time_limit", "3600",
+                "--results_dir", "maros_meszaros_problems_high_accuracy_suf_0.05_nec_0.9_art_0.2",
             ],
             "justMyCode": false,
         }
