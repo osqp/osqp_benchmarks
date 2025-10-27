@@ -38,6 +38,7 @@ class OSQPSolver(object):
         problem = example.qp_problem
         settings = self._settings.copy()
         high_accuracy = settings.pop('high_accuracy', None)
+        algebra_set = settings.pop('algebra', None)
 
         settings['adaptive_rho_interval'] = 0
         settings['adaptive_rho_tolerance'] = 5.0
@@ -52,7 +53,7 @@ class OSQPSolver(object):
         m.setup(problem['P'], problem['q'], problem['A'], problem['l'],
                 problem['u'],
                 **settings)
-        
+
         if codegen:
             m.codegen(codegen, force_rewrite=True)
             return None
@@ -81,7 +82,7 @@ class OSQPSolver(object):
                                  results.info.iter,
                                  results.info.dual_obj_val,
                                  results.info.duality_gap,
-                                 results.info.restarts,
+#                                 results.info.restarts,
                                  )
 
         return_results.status_polish = results.info.status_polish
@@ -91,6 +92,6 @@ class OSQPSolver(object):
         return_results.rho_updates = results.info.rho_updates
         return_results.dual_obj_val = results.info.dual_obj_val
         return_results.duality_gap = results.info.duality_gap
-        return_results.restarts = results.info.restarts
+        #return_results.restarts = results.info.restarts
 
         return return_results

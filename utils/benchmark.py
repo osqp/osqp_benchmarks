@@ -11,7 +11,7 @@ import matplotlib.pylab as plt
 
 MAX_TIMING = time_limit
 
-def plot_performance_profiles(problems, solvers):
+def plot_performance_profiles(results_dir, problems, solvers):
     """
     Plot performance profiles in matplotlib for specified problems and solvers
     """
@@ -21,19 +21,27 @@ def plot_performance_profiles(problems, solvers):
         if "polish" in s:
             solvers.remove(s)
 
-    df = pd.read_csv('./results/%s/performance_profiles.csv' % problems)
+    fname = "performance_profiles_" + "".join(problems) + ".csv"
+    performance_profiles_file = os.path.join('.', 'results',
+                                             results_dir,
+                                             fname)
+
+    df = pd.read_csv(performance_profiles_file)
     plt.figure(0)
+    plt.clf();
     for solver in solvers:
         plt.plot(df["tau"], df[solver], label=solver)
     plt.xlim(1., 10000.)
     plt.ylim(0., 1.)
     plt.xlabel(r'Performance ratio $\tau$')
     plt.ylabel('Ratio of problems solved')
+    plt.title(", ".join(problems))
     plt.xscale('log')
     plt.legend()
     plt.grid()
     plt.show(block=False)
-    results_file = './results/%s/%s.png' % (problems, problems)
+    results_file = './results/%s/profile_' % (results_dir)
+    results_file = results_file + "".join(problems) + '.png'
     print("Saving plots to %s" % results_file)
     plt.savefig(results_file)
 
@@ -58,21 +66,23 @@ def get_cumulative_data(solvers, problems, output_folder):
         df.to_csv(solver_file_name, index=False)
 
 
-def compute_performance_profiles(solvers, problems_type):
+def compute_performance_profiles(solvers, results_dir, problems):
     t = {}
     status = {}
 
     # Get time and status
     for solver in solvers:
-        path = os.path.join('.', 'results', problems_type,
+        path = os.path.join('.', 'results', results_dir,
                             solver, 'results.csv')
         df = pd.read_csv(path)
 
-        # Get total number of problems
-        n_problems = len(df)
+        df_problems = df[df['class'].isin(problems)]
 
-        t[solver] = df['run_time'].values
-        status[solver] = df['status'].values
+        # Get total number of problems
+        n_problems = len(df_problems)
+
+        t[solver] = df_problems['run_time'].values
+        status[solver] = df_problems['status'].values
 
         # Set maximum time for solvers that did not succeed
         for idx in range(n_problems):
@@ -109,9 +119,10 @@ def compute_performance_profiles(solvers, problems_type):
 
     # Store final pandas dataframe
     df_performance_profiles = pd.DataFrame(rho)
+    fname = "performance_profiles_" + "".join(problems) + ".csv"
     performance_profiles_file = os.path.join('.', 'results',
-                                             problems_type,
-                                             'performance_profiles.csv')
+                                             results_dir,
+                                             fname)
     df_performance_profiles.to_csv(performance_profiles_file, index=False)
 
     # Plot performance profiles
@@ -362,7 +373,7 @@ def compute_stats_info(solvers, benchmark_type,
     compute_failure_rates(solvers, benchmark_type)
 
     # Compute performance profiles
-    compute_performance_profiles(solvers, benchmark_type)
+    compute_performance_profiles(solvers, benchmark_type, problems)
 
     # Compute performance profiles
     compute_shifted_geometric_means(solvers, benchmark_type)
@@ -376,4 +387,4 @@ def compute_stats_info(solvers, benchmark_type,
 
     # Plot performance profiles
     if performance_profiles:
-        plot_performance_profiles(benchmark_type, solvers)
+        plot_performance_profiles(benchmark_type, problems, solvers)

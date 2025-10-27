@@ -43,8 +43,13 @@ if high_accuracy:
     for key in s.settings:
         s.settings[key]['high_accuracy'] = True
 else:
-    solvers = [s.OSQP, s.OSQP_polish, s.OSQP_MKL_DIRECT, s.OSQP_MKL_INDIRECT, s.OSQP_CUDA, s.GUROBI, s.MOSEK, s.ECOS, s.qpOASES]
-    OUTPUT_FOLDER = 'benchmark_problems'
+    #solvers = [s.OSQP, s.OSQP_polish, s.OSQP_MKL_DIRECT, s.OSQP_MKL_INDIRECT, s.OSQP_CUDA, s.GUROBI, s.MOSEK, s.ECOS, s.qpOASES]
+    #solvers = [s.OSQP, s.OSQP_MKL_DIRECT, s.OSQP_MKL_INDIRECT, s.OSQP_CUDA]
+    #solvers = [s.OSQP_high, s.OSQP_MKL_DIRECT_high, s.OSQP_MKL_INDIRECT_high, s.OSQP_CUDA_high]
+    #solvers = [s.OSQP_CUDA_DIRECT, s.OSQP_CUDA_INDIRECT]
+    #solvers = [s.OSQP_nodualgap, s.OSQP]
+    solvers = [s.OSQP, s.OSQP_MKL_DIRECT, s.OSQP_CUDA_DIRECT]
+    OUTPUT_FOLDER = 'benchmark_problems_direct2'
 
 
 if verbose:
@@ -54,25 +59,25 @@ if verbose:
 
 # Number of instances per different dimension
 n_instances = 10
-n_dim = 20
+n_dim = 10
 
 
 # Run benchmark problems
 problems = [
-            'Random QP',
+            #'Random QP',
             'Eq QP',
-            'Portfolio',
+            #'Portfolio',
             'Lasso',
-            'SVM',
-            'Huber',
-            'Control'
+            #'SVM',
+            #'Huber',
+            #'Control'
             ]
 
 problem_dimensions = {'Random QP': gen_int_log_space(10, 2000, n_dim),
                       'Eq QP': gen_int_log_space(10, 2000, n_dim),
-                      'Portfolio': gen_int_log_space(5, 150, n_dim),
+                      'Portfolio': gen_int_log_space(500, 1000, n_dim),
                       'Lasso': gen_int_log_space(10, 200, n_dim),
-                      'SVM': gen_int_log_space(10, 200, n_dim),
+                      'SVM': gen_int_log_space(500, 2000, n_dim),
                       'Huber': gen_int_log_space(10, 200, n_dim),
                       'Control': gen_int_log_space(10, 100, n_dim)}
 
@@ -100,7 +105,8 @@ for problem in problems:
                       n_instances)
     example.solve(parallel=problem_parallel[problem])
 
-# Compute results statistics
-compute_stats_info(solvers, OUTPUT_FOLDER,
-                   problems=problems,
-                   high_accuracy=high_accuracy)
+    # Compute results statistics
+    compute_stats_info(solvers,
+                       OUTPUT_FOLDER,
+                       problems=[problem],
+                       high_accuracy=high_accuracy)
