@@ -13,10 +13,41 @@ list = mdlist("*/*")
 prob_count = 0
 md_info = 0
 for problem in list
-    global md_kind = mdinfo(problem).content[4].items[end][1].content[1]  # Nasty
+    # Try to extract the kind field from metadata more robustly
+    info = mdinfo(problem)
+    md_kind = nothing
 
-    # Check if type is correct
-    if split(md_kind)[1] == "kind:"  # Got the right kind
+    # Search through content items to find the "kind:" field
+    try
+        for content_item in info.content
+            if hasfield(typeof(content_item), :items)
+                for item in content_item.items
+                    if length(item) > 0 && hasfield(typeof(item[1]), :content)
+                        for text in item[1].content
+                            # Convert to string to handle Markdown formatting objects
+                            text_str = string(text)
+                            if occursin("kind:", text_str)
+                                md_kind = text_str
+                                break
+                            end
+                        end
+                    end
+                    if !isnothing(md_kind)
+                        break
+                    end
+                end
+            end
+            if !isnothing(md_kind)
+                break
+            end
+        end
+    catch e
+        println("Could not extract metadata for problem $(problem): $(e)")
+        continue
+    end
+
+    # Check if we found the kind field and if type is correct
+    if !isnothing(md_kind) && split(md_kind)[1] == "kind:"  # Got the right kind
         kind = join(split(md_kind)[2:end], " ")
         if kind in accepted_problems
             md = mdopen(problem)
@@ -51,7 +82,7 @@ for problem in list
             
             print("Written to file $(file_name)\n")
         end
-    else
+    elseif !isnothing(md_kind)
         print("Wrong type extracted from metadata. Type = $(md_kind)\n")
     end
     
